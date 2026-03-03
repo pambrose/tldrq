@@ -20,6 +20,7 @@ export function BookmarkCard({
   const [menuOpen, setMenuOpen] = useState(false);
   const [moveMenuOpen, setMoveMenuOpen] = useState(false);
   const [priorityMenuOpen, setPriorityMenuOpen] = useState(false);
+  const [deleting, setDeleting] = useState(false);
 
   const toggleRead = async () => {
     await fetch(`/api/bookmarks/${bookmark.id}`, {
@@ -54,6 +55,8 @@ export function BookmarkCard({
 
   const handleDelete = async () => {
     if (!confirm("Delete this bookmark?")) return;
+    setDeleting(true);
+    setMenuOpen(false);
     await fetch(`/api/bookmarks/${bookmark.id}`, { method: "DELETE" });
     router.refresh();
   };
@@ -79,7 +82,7 @@ export function BookmarkCard({
 
   return (
     <div
-      className={`relative rounded-lg border bg-white p-4 transition-shadow hover:shadow-md dark:bg-gray-900 dark:border-gray-700 ${borderClass}`}
+      className={`relative rounded-lg border bg-white p-4 transition-all hover:shadow-md dark:bg-gray-900 dark:border-gray-700 ${borderClass} ${deleting ? "opacity-40 pointer-events-none" : ""}`}
     >
       <div className="flex gap-4">
         {/* OG Image thumbnail */}
