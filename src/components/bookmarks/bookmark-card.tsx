@@ -63,7 +63,8 @@ export function BookmarkCard({
     setMenuOpen(false);
     const res = await fetch(`/api/bookmarks/${bookmark.id}`, { method: "DELETE" });
     if (!res.ok) { setDeleting(false); alert("Failed to delete bookmark"); return; }
-    router.refresh();
+    // Let the collapse animation play before refreshing the list
+    setTimeout(() => router.refresh(), 300);
   };
 
   const collectionName = bookmark.collection_id
@@ -81,7 +82,8 @@ export function BookmarkCard({
 
   return (
     <div
-      className={`relative rounded-lg border bg-white p-4 transition-all hover:shadow-md dark:bg-gray-900 dark:border-gray-700 ${borderClass} ${deleting ? "opacity-40 pointer-events-none" : ""}`}
+      style={deleting ? { maxHeight: 0, opacity: 0, padding: 0, marginBottom: 0, overflow: "hidden" } : {}}
+      className={`relative rounded-lg border bg-white p-4 transition-all duration-300 ease-in-out hover:shadow-md dark:bg-gray-900 dark:border-gray-700 ${borderClass} ${deleting ? "pointer-events-none scale-95 border-transparent" : ""}`}
     >
       <div className="flex gap-4">
         {/* OG Image thumbnail */}
