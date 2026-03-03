@@ -1,7 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
+import { disintegrate } from "@/lib/utils/disintegrate";
 import type { Bookmark, Collection } from "@/types/database";
 import { timeAgo } from "@/lib/utils/time";
 import { PRIORITY_BORDER, PRIORITY_LEVELS, PRIORITY_LABELS } from "@/lib/utils/priority";
@@ -18,6 +19,7 @@ export function BookmarkCard({
   collections: Collection[];
 }) {
   const router = useRouter();
+  const cardRef = useRef<HTMLDivElement>(null);
   const [menuOpen, setMenuOpen] = useState(false);
   const [moveMenuOpen, setMoveMenuOpen] = useState(false);
   const [priorityMenuOpen, setPriorityMenuOpen] = useState(false);
@@ -63,8 +65,10 @@ export function BookmarkCard({
     setMenuOpen(false);
     const res = await fetch(`/api/bookmarks/${bookmark.id}`, { method: "DELETE" });
     if (!res.ok) { setDeleting(false); alert("Failed to delete bookmark"); return; }
-    // Let the collapse animation play before refreshing the list
-    setTimeout(() => router.refresh(), 300);
+    if (cardRef.current) {
+      await disintegrate(cardRef.current);
+    }
+    router.refresh();
   };
 
   const collectionName = bookmark.collection_id
@@ -82,8 +86,8 @@ export function BookmarkCard({
 
   return (
     <div
-      style={deleting ? { maxHeight: 0, opacity: 0, padding: 0, marginBottom: 0, overflow: "hidden" } : {}}
-      className={`relative rounded-lg border bg-white p-4 transition-all duration-300 ease-in-out hover:shadow-md dark:bg-gray-900 dark:border-gray-700 ${borderClass} ${deleting ? "pointer-events-none scale-95 border-transparent" : ""}`}
+      ref={cardRef}
+      className={`relative rounded-lg border bg-white p-4 transition-all duration-300 ease-in-out hover:shadow-md dark:bg-gray-900 dark:border-gray-700 ${borderClass} ${deleting ? "pointer-events-none" : ""}`}
     >
       <div className="flex gap-4">
         {/* OG Image thumbnail */}
