@@ -65,6 +65,18 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "URL is required" }, { status: 400 });
   }
 
+  // Check for duplicate URL for this user
+  const { data: existing } = await supabase
+    .from("bookmarks")
+    .select("id")
+    .eq("user_id", user.id)
+    .eq("url", url)
+    .maybeSingle();
+
+  if (existing) {
+    return NextResponse.json({ error: "This URL has already been bookmarked" }, { status: 409 });
+  }
+
   // Fetch OG metadata server-side
   const metadata = await fetchOGMetadata(url);
 

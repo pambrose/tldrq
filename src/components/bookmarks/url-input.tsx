@@ -11,6 +11,7 @@ export function UrlInput({ collections }: { collections: Collection[] }) {
   const [collectionId, setCollectionId] = useState("");
   const [priority, setPriority] = useState<Priority>("normal");
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -18,6 +19,7 @@ export function UrlInput({ collections }: { collections: Collection[] }) {
     if (!url.trim()) return;
 
     setLoading(true);
+    setError(null);
     try {
       const res = await fetch("/api/bookmarks", {
         method: "POST",
@@ -33,6 +35,9 @@ export function UrlInput({ collections }: { collections: Collection[] }) {
         setUrl("");
         setPriority("normal");
         router.refresh();
+      } else {
+        const data = await res.json();
+        setError(data.error || "Failed to save bookmark");
       }
     } finally {
       setLoading(false);
@@ -40,6 +45,10 @@ export function UrlInput({ collections }: { collections: Collection[] }) {
   };
 
   return (
+    <div className="space-y-2">
+    {error && (
+      <p className="text-sm text-red-600 dark:text-red-400">{error}</p>
+    )}
     <form onSubmit={handleSubmit} className="flex flex-wrap gap-2">
       <input
         type="url"
@@ -80,5 +89,6 @@ export function UrlInput({ collections }: { collections: Collection[] }) {
         {loading ? "Saving..." : "Save"}
       </button>
     </form>
+    </div>
   );
 }
