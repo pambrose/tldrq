@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
-import { fetchOGMetadata, isYouTubeUrl, isTwitterUrl, isVimeoUrl, isTikTokUrl } from "@/lib/utils/metadata";
+import { fetchOGMetadata, isYouTubeUrl, isTwitterUrl, isVimeoUrl, isTikTokUrl, isGitRepoUrl } from "@/lib/utils/metadata";
 import { PRIORITY_LEVELS } from "@/lib/utils/priority";
 import type { Priority } from "@/lib/utils/priority";
 
@@ -72,7 +72,8 @@ export async function POST(request: Request) {
   if (!resolvedCollectionId) {
     const autoCollection =
       (isYouTubeUrl(url) || isVimeoUrl(url) || isTikTokUrl(url)) ? "Videos" :
-      isTwitterUrl(url) ? "Tweets" : null;
+      isTwitterUrl(url) ? "Tweets" :
+      isGitRepoUrl(url) ? "Repos" : null;
     if (autoCollection) {
       const { data: existing } = await supabase
         .from("collections")

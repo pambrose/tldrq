@@ -7,7 +7,7 @@ Save, organize, and track your reading with a clean, minimal web app.
 - **Bookmark any URL** with auto-fetched title, description, and thumbnail (OG metadata)
 - **Enhanced metadata** via oEmbed for: YouTube, Twitter/X, Vimeo, TikTok, Spotify, Reddit, SoundCloud, Flickr, SlideShare, and Instagram
 - **Collections** — organize bookmarks into collections (Videos and Tweets created by default)
-- **Auto-categorization** — YouTube, Vimeo, and TikTok URLs → Videos; Twitter/X URLs → Tweets
+- **Auto-categorization** — YouTube, Vimeo, and TikTok URLs → Videos; Twitter/X URLs → Tweets; GitHub/GitLab URLs → Repos
 - **Priority levels** — urgent, high, normal, low with color-coded borders and sorting
 - **Read/unread tracking** — mark bookmarks as read with visual indicators
 - **Collapsible filters** — filter by collection, read status, priority; sort by date or priority

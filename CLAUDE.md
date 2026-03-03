@@ -28,7 +28,7 @@ Server components fetch data and pass it as props to client components. Client c
 
 1. **Proxy** (`src/proxy.ts`) runs `updateSession` on every request — refreshes session cookies, redirects unauthenticated users to `/login` (except `/login`, `/auth/*`, `/share/*`)
 2. OAuth sign-in calls `supabase.auth.signInWithOAuth()` → redirects to provider → returns to `/auth/callback`
-3. Callback exchanges code for session and creates default collections ("Videos", "Tweets") for the user
+3. Callback exchanges code for session and creates default collections ("Videos", "Tweets", "Articles", "Repos") for the user
 4. Two Supabase clients: `server.ts` (uses `await cookies()`, for server components/API routes) and `client.ts` (browser, for OAuth initiation)
 
 ### Metadata Fetching (`src/lib/utils/metadata.ts`)
@@ -41,7 +41,7 @@ URL metadata is fetched server-side during bookmark creation with a 5-second tim
 
 ### Auto-Categorization
 
-YouTube URLs → "Videos" collection, Twitter/X URLs → "Tweets" collection (find-or-create). Only when user hasn't explicitly chosen a collection.
+YouTube/Vimeo/TikTok URLs → "Videos", Twitter/X URLs → "Tweets", GitHub/GitLab URLs → "Repos" (find-or-create). Only when user hasn't explicitly chosen a collection.
 
 ### Dark Mode
 

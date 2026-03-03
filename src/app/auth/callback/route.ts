@@ -13,7 +13,7 @@ export async function GET(request: Request) {
       // Ensure default collections exist for the user
       const { data: { user } } = await supabase.auth.getUser();
       if (user) {
-        const defaultCollections = ["Videos", "Tweets", "Articles"];
+        const defaultCollections = ["Videos", "Tweets", "Articles", "Repos"];
         const { data: existing } = await supabase
           .from("collections")
           .select("name")

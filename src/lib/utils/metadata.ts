@@ -48,6 +48,18 @@ export function isTikTokUrl(url: string): boolean {
   }
 }
 
+export function isGitRepoUrl(url: string): boolean {
+  try {
+    const u = new URL(url);
+    return (
+      u.hostname === "github.com" || u.hostname === "www.github.com" ||
+      u.hostname === "gitlab.com" || u.hostname === "www.gitlab.com"
+    );
+  } catch {
+    return false;
+  }
+}
+
 function isSpotifyUrl(url: string): boolean {
   try {
     const u = new URL(url);
