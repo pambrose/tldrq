@@ -1,9 +1,30 @@
 "use client";
 
+import { useState, useEffect } from "react";
+import { useSearchParams } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 
 export function LoginButtons() {
+  const searchParams = useSearchParams();
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    // Check for error in URL search params (from auth callback redirect)
+    // and in hash fragment (from Supabase OAuth error redirect)
+    if (searchParams.get("error")) {
+      const hash = window.location.hash;
+      if (hash) {
+        const params = new URLSearchParams(hash.slice(1));
+        const description = params.get("error_description");
+        setError(description?.replace(/\+/g, " ") || "Authentication failed. Please try again.");
+      } else {
+        setError("Authentication failed. Please try again.");
+      }
+    }
+  }, [searchParams]);
+
   const signInWith = (provider: "google" | "github") => {
+    setError(null);
     const supabase = createClient();
     supabase.auth.signInWithOAuth({
       provider,
@@ -15,6 +36,11 @@ export function LoginButtons() {
 
   return (
     <div className="space-y-3">
+      {error && (
+        <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700 dark:border-red-800 dark:bg-red-900/30 dark:text-red-400">
+          {error}
+        </div>
+      )}
       <button
         onClick={() => signInWith("github")}
         className="flex w-full items-center justify-center gap-3 rounded-lg border border-gray-300 bg-gray-900 px-4 py-2.5 text-sm font-medium text-white hover:bg-gray-800 dark:border-gray-600 dark:bg-white dark:text-gray-900 dark:hover:bg-gray-100 transition-colors"

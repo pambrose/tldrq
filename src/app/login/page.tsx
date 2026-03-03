@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import { LoginButtons } from "@/components/auth/login-buttons";
 
 export default function LoginPage() {
@@ -10,7 +11,9 @@ export default function LoginPage() {
             Save, organize, and track your reading
           </p>
         </div>
-        <LoginButtons />
+        <Suspense>
+          <LoginButtons />
+        </Suspense>
       </div>
     </div>
   );
