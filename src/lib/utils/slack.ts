@@ -5,7 +5,7 @@ interface BookmarkNotification {
   priority: string;
 }
 
-export async function notifySlackBookmarkCreated(bookmark: BookmarkNotification): Promise<void> {
+export function notifySlackBookmarkCreated(bookmark: BookmarkNotification): void {
   const webhookUrl = process.env.SLACK_WEBHOOK_URL;
   if (!webhookUrl) return;
 
@@ -25,19 +25,19 @@ export async function notifySlackBookmarkCreated(bookmark: BookmarkNotification)
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), 5000);
 
-  try {
-    const res = await fetch(webhookUrl, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ text }),
-      signal: controller.signal,
-    });
-    if (!res.ok) {
-      console.error(`Slack webhook failed: ${res.status} ${res.statusText}`);
-    }
-  } catch (err) {
-    console.error("Slack webhook error:", err instanceof Error ? err.message : err);
-  } finally {
-    clearTimeout(timeout);
-  }
+  fetch(webhookUrl, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ text }),
+    signal: controller.signal,
+  })
+    .then((res) => {
+      if (!res.ok) {
+        console.error(`Slack webhook failed: ${res.status} ${res.statusText}`);
+      }
+    })
+    .catch((err) => {
+      console.error("Slack webhook error:", err instanceof Error ? err.message : err);
+    })
+    .finally(() => clearTimeout(timeout));
 }
