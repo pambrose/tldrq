@@ -63,11 +63,12 @@ export function BookmarkCard({
     if (!confirm("Delete this bookmark?")) return;
     setDeleting(true);
     setMenuOpen(false);
-    const res = await fetch(`/api/bookmarks/${bookmark.id}`, { method: "DELETE" });
-    if (!res.ok) { setDeleting(false); alert("Failed to delete bookmark"); return; }
-    if (cardRef.current) {
-      await disintegrate(cardRef.current);
-    }
+    // Run API call and animation concurrently for instant visual feedback
+    const [res] = await Promise.all([
+      fetch(`/api/bookmarks/${bookmark.id}`, { method: "DELETE" }),
+      cardRef.current ? disintegrate(cardRef.current) : Promise.resolve(),
+    ]);
+    if (!res.ok) { alert("Failed to delete bookmark"); }
     router.refresh();
   };
 
