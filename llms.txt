@@ -19,10 +19,10 @@ A bookmark manager built with Next.js 16 (App Router), Supabase (PostgreSQL + Au
 - `src/app/(main)/page.tsx` — Main dashboard (server component, fetches bookmarks/collections)
 - `src/app/(main)/layout.tsx` — Authenticated layout with header
 - `src/app/layout.tsx` — Root layout with inline theme script for flash-free dark mode
-- `src/app/api/bookmarks/route.ts` — CRUD for bookmarks, auto-assigns YouTube/Twitter URLs to collections
+- `src/app/api/bookmarks/route.ts` — CRUD for bookmarks, auto-assigns YouTube/Vimeo/TikTok/Twitter URLs to collections
 - `src/app/api/collections/route.ts` — CRUD for collections
 - `src/app/auth/callback/route.ts` — OAuth callback, creates default collections (Videos, Tweets)
-- `src/lib/utils/metadata.ts` — Fetches OG metadata; special handling for YouTube (oEmbed) and Twitter/X (oEmbed + OG image)
+- `src/lib/utils/metadata.ts` — Fetches OG metadata; oEmbed for YouTube, Twitter/X, Vimeo, TikTok, Spotify, Reddit, SoundCloud, Flickr, SlideShare; OG scraping for Instagram
 - `src/lib/utils/priority.ts` — Priority levels config (urgent, high, normal, low)
 - `src/components/bookmarks/bookmark-card.tsx` — Main bookmark display with menus for move/priority/delete
 - `src/components/layout/theme-toggle.tsx` — Dark/light mode toggle with localStorage persistence
@@ -41,9 +41,9 @@ Two tables with Row Level Security:
 
 - OAuth login (Google, GitHub) via Supabase Auth
 - Auto-fetched metadata (title, description, thumbnail) for saved URLs
-- YouTube: title + thumbnail via oEmbed API
-- Twitter/X: tweet text via oEmbed + image via OG tags
-- Collections with auto-categorization (YouTube → Videos, Twitter → Tweets)
+- oEmbed support for: YouTube, Twitter/X, Vimeo, TikTok, Spotify, Reddit, SoundCloud, Flickr, SlideShare
+- Instagram: enhanced OG scraping (no public oEmbed)
+- Collections with auto-categorization (YouTube/Vimeo/TikTok → Videos, Twitter → Tweets)
 - Priority system (urgent/high/normal/low) with color borders and sorting
 - Read/unread tracking
 - Collapsible filter panel (collection, read status, priority, sort)
