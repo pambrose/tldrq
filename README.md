@@ -1,36 +1,94 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Reading List
+
+Save, organize, and track your reading with a clean, minimal web app.
+
+## Features
+
+- **Bookmark any URL** with auto-fetched title, description, and thumbnail (OG metadata)
+- **YouTube support** — video title and thumbnail via oEmbed API
+- **Twitter/X support** — condensed tweet text and image via oEmbed + OG tags
+- **Collections** — organize bookmarks into collections (Videos and Tweets created by default)
+- **Auto-categorization** — YouTube and Twitter/X URLs automatically assigned to their collections
+- **Priority levels** — urgent, high, normal, low with color-coded borders and sorting
+- **Read/unread tracking** — mark bookmarks as read with visual indicators
+- **Collapsible filters** — filter by collection, read status, priority; sort by date or priority
+- **Dark/light mode** — toggle with localStorage persistence, dark mode by default
+- **Public sharing** — share collections via public URL
+- **Export** — download displayed URLs as a text file
+- **OAuth login** — Google and GitHub authentication via Supabase
+
+## Tech Stack
+
+- **Framework**: [Next.js 16](https://nextjs.org) (App Router, Turbopack)
+- **Database & Auth**: [Supabase](https://supabase.com) (PostgreSQL, Row Level Security, OAuth)
+- **Styling**: [Tailwind CSS v4](https://tailwindcss.com)
+- **Metadata**: [Cheerio](https://cheerio.js.org) for OG tag parsing
+- **Deployment**: [Vercel](https://vercel.com)
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+- Node.js 18+
+- A [Supabase](https://supabase.com) project
+
+### Environment Variables
+
+Create a `.env.local` file:
+
+```
+NEXT_PUBLIC_SUPABASE_URL=your-supabase-url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your-supabase-anon-key
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### Database Setup
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Run the schema migration against your Supabase project:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+# Apply schema
+psql -f supabase/migrations/001_schema.sql
 
-## Learn More
+# To reset (drops all tables)
+psql -f supabase/drop_all.sql
+```
 
-To learn more about Next.js, take a look at the following resources:
+### Development
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```bash
+npm install
+npm run dev
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Open [http://localhost:3000](http://localhost:3000).
 
-## Deploy on Vercel
+### Production Build
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+```bash
+npm run build
+npm start
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Project Structure
+
+```
+src/
+  app/
+    (main)/          # Authenticated layout + dashboard
+    api/             # REST endpoints (bookmarks, collections, metadata)
+    auth/            # OAuth callback
+    login/           # Login page
+    share/[slug]/    # Public shared collections
+  components/
+    auth/            # Login buttons
+    bookmarks/       # Card, list, filters, URL input, export, refresh
+    collections/     # Tabs, menu
+    layout/          # Header, sign-out, theme toggle
+  lib/
+    supabase/        # Client/server/middleware helpers
+    utils/           # Metadata fetching, time formatting, priority config
+  types/             # TypeScript interfaces
+supabase/
+  migrations/        # SQL schema
+  drop_all.sql       # Reset script
+```

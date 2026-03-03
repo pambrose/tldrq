@@ -1,0 +1,69 @@
+# Reading List App
+
+> Save, organize, and track your reading with a minimal web app.
+
+## Overview
+
+A bookmark manager built with Next.js 16 (App Router), Supabase (PostgreSQL + Auth), and Tailwind CSS v4. Users authenticate via Google or GitHub OAuth, save URLs with auto-fetched metadata, organize into collections, set priorities, and track read status.
+
+## Architecture
+
+- **Next.js 16 App Router** with server components for data fetching and client components for interactivity
+- **Supabase** for PostgreSQL database, Row Level Security, and OAuth authentication
+- **Tailwind CSS v4** with class-based dark mode (`@custom-variant dark`)
+- **Cheerio** for server-side HTML parsing (OG metadata extraction)
+- **Deployed on Vercel**
+
+## Key Files
+
+- `src/app/(main)/page.tsx` — Main dashboard (server component, fetches bookmarks/collections)
+- `src/app/(main)/layout.tsx` — Authenticated layout with header
+- `src/app/layout.tsx` — Root layout with inline theme script for flash-free dark mode
+- `src/app/api/bookmarks/route.ts` — CRUD for bookmarks, auto-assigns YouTube/Twitter URLs to collections
+- `src/app/api/collections/route.ts` — CRUD for collections
+- `src/app/auth/callback/route.ts` — OAuth callback, creates default collections (Videos, Tweets)
+- `src/lib/utils/metadata.ts` — Fetches OG metadata; special handling for YouTube (oEmbed) and Twitter/X (oEmbed + OG image)
+- `src/lib/utils/priority.ts` — Priority levels config (urgent, high, normal, low)
+- `src/components/bookmarks/bookmark-card.tsx` — Main bookmark display with menus for move/priority/delete
+- `src/components/layout/theme-toggle.tsx` — Dark/light mode toggle with localStorage persistence
+- `src/types/database.ts` — TypeScript interfaces for Bookmark and Collection
+- `supabase/migrations/001_schema.sql` — Full database schema
+- `supabase/drop_all.sql` — Reset script
+
+## Data Model
+
+Two tables with Row Level Security:
+
+- **collections**: id, user_id, name, is_public, share_slug, created_at
+- **bookmarks**: id, user_id, collection_id, url, title, description, image_url, site_name, is_read, priority, priority_order (computed), created_at
+
+## Features
+
+- OAuth login (Google, GitHub) via Supabase Auth
+- Auto-fetched metadata (title, description, thumbnail) for saved URLs
+- YouTube: title + thumbnail via oEmbed API
+- Twitter/X: tweet text via oEmbed + image via OG tags
+- Collections with auto-categorization (YouTube → Videos, Twitter → Tweets)
+- Priority system (urgent/high/normal/low) with color borders and sorting
+- Read/unread tracking
+- Collapsible filter panel (collection, read status, priority, sort)
+- Dark mode default with light mode toggle, localStorage persistence
+- Public collection sharing via slug URLs
+- Export displayed URLs to text file
+- User profile display (name, avatar from OAuth provider)
+
+## Environment Variables
+
+```
+NEXT_PUBLIC_SUPABASE_URL
+NEXT_PUBLIC_SUPABASE_ANON_KEY
+```
+
+## Commands
+
+```
+npm run dev    # Development server
+npm run build  # Production build
+npm start      # Start production server
+npm run lint   # ESLint
+```
