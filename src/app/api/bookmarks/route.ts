@@ -67,31 +67,29 @@ export async function POST(request: Request) {
   // Fetch OG metadata server-side
   const metadata = await fetchOGMetadata(url);
 
-  // Auto-assign URLs to collections based on site
+  // Auto-assign URLs to collections based on site (defaults to "Articles")
   let resolvedCollectionId = collection_id || null;
   if (!resolvedCollectionId) {
     const autoCollection =
       (isYouTubeUrl(url) || isVimeoUrl(url) || isTikTokUrl(url)) ? "Videos" :
       isTwitterUrl(url) ? "Tweets" :
-      (isGitHubUrl(url) || isGitLabUrl(url)) ? "Repos" : null;
-    if (autoCollection) {
-      const { data: existing } = await supabase
-        .from("collections")
-        .select("id")
-        .eq("user_id", user.id)
-        .eq("name", autoCollection)
-        .single();
+      (isGitHubUrl(url) || isGitLabUrl(url)) ? "Repos" : "Articles";
+    const { data: existing } = await supabase
+      .from("collections")
+      .select("id")
+      .eq("user_id", user.id)
+      .eq("name", autoCollection)
+      .single();
 
-      if (existing) {
-        resolvedCollectionId = existing.id;
-      } else {
-        const { data: created } = await supabase
-          .from("collections")
-          .insert({ user_id: user.id, name: autoCollection })
-          .select("id")
-          .single();
-        if (created) resolvedCollectionId = created.id;
-      }
+    if (existing) {
+      resolvedCollectionId = existing.id;
+    } else {
+      const { data: created } = await supabase
+        .from("collections")
+        .insert({ user_id: user.id, name: autoCollection })
+        .select("id")
+        .single();
+      if (created) resolvedCollectionId = created.id;
     }
   }
 

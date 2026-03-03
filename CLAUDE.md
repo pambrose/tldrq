@@ -44,7 +44,7 @@ URL metadata is fetched server-side during bookmark creation with a 5-second tim
 
 ### Auto-Categorization
 
-YouTube/Vimeo/TikTok URLs → "Videos", Twitter/X URLs → "Tweets", GitHub/GitLab URLs → "Repos" (find-or-create). Only when user hasn't explicitly chosen a collection.
+YouTube/Vimeo/TikTok URLs → "Videos", Twitter/X URLs → "Tweets", GitHub/GitLab URLs → "Repos", all other URLs → "Articles" (find-or-create). Only when user hasn't explicitly chosen a collection.
 
 ### Dark Mode
 
