@@ -57,6 +57,10 @@ export function BookmarkCard({
     router.refresh();
   };
 
+  const collectionName = bookmark.collection_id
+    ? collections.find((c) => c.id === bookmark.collection_id)?.name ?? null
+    : null;
+
   const displayUrl = (() => {
     try {
       return new URL(bookmark.url).hostname;
@@ -109,6 +113,11 @@ export function BookmarkCard({
             <span className="text-xs text-gray-400 dark:text-gray-500">
               {timeAgo(bookmark.created_at)}
             </span>
+            {collectionName && (
+              <span className="rounded-full bg-gray-100 px-2 py-0.5 text-xs text-gray-600 dark:bg-gray-800 dark:text-gray-400">
+                {collectionName}
+              </span>
+            )}
             <PriorityBadge priority={bookmark.priority} />
             <button
               onClick={toggleRead}
@@ -146,17 +155,25 @@ export function BookmarkCard({
                 <div className="border-t dark:border-gray-600">
                   <button
                     onClick={() => moveToCollection(null)}
-                    className="w-full px-6 py-1.5 text-left text-xs text-gray-600 hover:bg-gray-50 dark:text-gray-400 dark:hover:bg-gray-700"
+                    className={`w-full px-6 py-1.5 text-left text-xs hover:bg-gray-50 dark:hover:bg-gray-700 ${
+                      !bookmark.collection_id
+                        ? "font-semibold text-blue-600 dark:text-blue-400"
+                        : "text-gray-600 dark:text-gray-400"
+                    }`}
                   >
-                    Uncategorized
+                    Uncategorized{!bookmark.collection_id && " \u2713"}
                   </button>
                   {collections.map((c) => (
                     <button
                       key={c.id}
                       onClick={() => moveToCollection(c.id)}
-                      className="w-full px-6 py-1.5 text-left text-xs text-gray-600 hover:bg-gray-50 dark:text-gray-400 dark:hover:bg-gray-700"
+                      className={`w-full px-6 py-1.5 text-left text-xs hover:bg-gray-50 dark:hover:bg-gray-700 ${
+                        bookmark.collection_id === c.id
+                          ? "font-semibold text-blue-600 dark:text-blue-400"
+                          : "text-gray-600 dark:text-gray-400"
+                      }`}
                     >
-                      {c.name}
+                      {c.name}{bookmark.collection_id === c.id && " \u2713"}
                     </button>
                   ))}
                 </div>
