@@ -8,7 +8,8 @@ export async function notifySlackUserLogin(user: LoginNotification): Promise<voi
   if (!webhookUrl) return;
 
   const displayName = user.name || user.email || "Unknown user";
-  const text = `👋 ${displayName} just logged in`;
+  const now = new Date().toString().replace(/ \(.*\)$/, "");
+  const text = `👋 ${displayName} just logged in — ${now}`;
 
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), 5000);
