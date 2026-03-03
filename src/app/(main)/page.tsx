@@ -65,16 +65,24 @@ export default async function DashboardPage({
       {/* URL Input */}
       <UrlInput collections={typedCollections} />
 
-      {/* Collection tabs + menu */}
-      <div className="flex items-center gap-2">
-        <div className="flex-1">
-          <CollectionTabs collections={typedCollections} />
+      {/* Collapsible filters */}
+      <details open={!!(collection || filter || priority || sort)} className="group">
+        <summary className="flex cursor-pointer list-none items-center gap-1 text-xs font-medium uppercase text-gray-500 dark:text-gray-400 select-none">
+          <svg className="h-4 w-4 transition-transform group-open:rotate-90" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+          </svg>
+          Filters{(collection || filter || priority || sort) ? " (active)" : ""}
+        </summary>
+        <div className="mt-3 space-y-4">
+          <div className="flex items-center gap-2">
+            <div className="flex-1">
+              <CollectionTabs collections={typedCollections} />
+            </div>
+            {activeCollection && <CollectionMenu collection={activeCollection} />}
+          </div>
+          <FilterTabs />
         </div>
-        {activeCollection && <CollectionMenu collection={activeCollection} />}
-      </div>
-
-      {/* Filter tabs */}
-      <FilterTabs />
+      </details>
 
       {/* Bookmark list */}
       <BookmarkList bookmarks={typedBookmarks} collections={typedCollections} />
