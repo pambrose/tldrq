@@ -30,6 +30,7 @@ export async function GET(request: Request) {
         await notifySlackUserLogin({
           email: user.email,
           name: user.user_metadata?.full_name,
+          provider: user.app_metadata?.provider,
         });
       }
       return NextResponse.redirect(`${origin}${next}`);

@@ -1,6 +1,7 @@
 interface LoginNotification {
   email: string | undefined;
   name: string | undefined;
+  provider: string | undefined;
 }
 
 export async function notifySlackUserLogin(user: LoginNotification): Promise<void> {
@@ -9,7 +10,8 @@ export async function notifySlackUserLogin(user: LoginNotification): Promise<voi
 
   const displayName = user.name || user.email || "Unknown user";
   const now = new Date().toString().replace(/ GMT.*$/, "");
-  const text = `👋 ${displayName} just logged in - ${now}`;
+  const providerLabel = user.provider ? ` via ${user.provider.charAt(0).toUpperCase() + user.provider.slice(1)}` : "";
+  const text = `👋 ${displayName} just logged in${providerLabel} - ${now}`;
 
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), 5000);
