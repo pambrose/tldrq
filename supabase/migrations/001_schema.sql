@@ -27,11 +27,22 @@ create table public.bookmarks (
   image_url text,
   site_name text,
   is_read boolean not null default false,
+  priority text not null default 'normal' check (priority in ('urgent', 'high', 'normal', 'low')),
+  priority_order smallint generated always as (
+    case priority
+      when 'urgent' then 0
+      when 'high'   then 1
+      when 'normal' then 2
+      when 'low'    then 3
+    end
+  ) stored,
   created_at timestamptz not null default now()
 );
 create index idx_bookmarks_user_id on public.bookmarks(user_id);
 create index idx_bookmarks_collection_id on public.bookmarks(collection_id);
 create index idx_bookmarks_user_read on public.bookmarks(user_id, is_read);
+create index idx_bookmarks_priority on public.bookmarks(user_id, priority);
+create index idx_bookmarks_priority_order on public.bookmarks(user_id, priority_order, created_at desc);
 alter table public.bookmarks enable row level security;
 create policy "Users can view own bookmarks" on public.bookmarks for select to authenticated using (auth.uid() = user_id);
 create policy "Users can insert own bookmarks" on public.bookmarks for insert to authenticated with check (auth.uid() = user_id);
