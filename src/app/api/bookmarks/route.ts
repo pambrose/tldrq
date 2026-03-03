@@ -3,6 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import { fetchOGMetadata, isYouTubeUrl, isTwitterUrl, isVimeoUrl, isTikTokUrl, isGitHubUrl, isGitLabUrl } from "@/lib/utils/metadata";
 import { PRIORITY_LEVELS } from "@/lib/utils/priority";
 import type { Priority } from "@/lib/utils/priority";
+import { notifySlackBookmarkCreated } from "@/lib/utils/slack";
 
 export async function GET(request: Request) {
   const supabase = await createClient();
@@ -69,11 +70,13 @@ export async function POST(request: Request) {
 
   // Auto-assign URLs to collections based on site (defaults to "Articles")
   let resolvedCollectionId = collection_id || null;
+  let resolvedCollectionName: string | null = null;
   if (!resolvedCollectionId) {
     const autoCollection =
       (isYouTubeUrl(url) || isVimeoUrl(url) || isTikTokUrl(url)) ? "Videos" :
       isTwitterUrl(url) ? "Tweets" :
       (isGitHubUrl(url) || isGitLabUrl(url)) ? "Repos" : "Articles";
+    resolvedCollectionName = autoCollection;
     const { data: existing } = await supabase
       .from("collections")
       .select("id")
@@ -91,6 +94,14 @@ export async function POST(request: Request) {
         .single();
       if (created) resolvedCollectionId = created.id;
     }
+  } else {
+    // Look up the collection name for the Slack notification
+    const { data: col } = await supabase
+      .from("collections")
+      .select("name")
+      .eq("id", collection_id)
+      .single();
+    if (col) resolvedCollectionName = col.name;
   }
 
   const { data, error } = await supabase
@@ -114,6 +125,14 @@ export async function POST(request: Request) {
   if (error) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
+
+  // Fire-and-forget Slack notification
+  notifySlackBookmarkCreated({
+    title: metadata.title,
+    url,
+    collectionName: resolvedCollectionName,
+    priority: safePriority,
+  });
 
   return NextResponse.json(data, { status: 201 });
 }

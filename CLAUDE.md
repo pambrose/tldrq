@@ -73,6 +73,7 @@ Four levels: urgent, high, normal, low. Database has a computed `priority_order`
 ```
 NEXT_PUBLIC_SUPABASE_URL
 NEXT_PUBLIC_SUPABASE_ANON_KEY
+SLACK_WEBHOOK_URL              # Optional — Slack incoming webhook for bookmark notifications
 ```
 
 ## Database

@@ -38,6 +38,7 @@ Create a `.env.local` file:
 ```
 NEXT_PUBLIC_SUPABASE_URL=your-supabase-url
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your-supabase-anon-key
+SLACK_WEBHOOK_URL=https://hooks.slack.com/services/...  # Optional — bookmark notifications
 ```
 
 ### Database Setup
@@ -98,9 +99,10 @@ In the Supabase dashboard under Authentication → Providers:
 
 1. Push the repo to GitHub
 2. Go to [vercel.com](https://vercel.com) → Add New Project → Import the repo
-3. Add two environment variables:
+3. Add environment variables:
     - `NEXT_PUBLIC_SUPABASE_URL` → your Supabase project URL
     - `NEXT_PUBLIC_SUPABASE_ANON_KEY` → your Supabase anon key
+    - `SLACK_WEBHOOK_URL` → (optional) Slack incoming webhook for bookmark notifications
 4. Deploy
 
 ### 4. Update Supabase Redirect URLs
