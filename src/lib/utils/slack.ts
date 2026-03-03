@@ -9,7 +9,7 @@ export async function notifySlackUserLogin(user: LoginNotification): Promise<voi
 
   const displayName = user.name || user.email || "Unknown user";
   const now = new Date().toString().replace(/ \(.*\)$/, "");
-  const text = `👋 ${displayName} just logged in — ${now}`;
+  const text = `👋 ${displayName} just logged in - ${now}`;
 
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), 5000);
