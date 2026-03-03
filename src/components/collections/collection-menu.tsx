@@ -14,11 +14,12 @@ export function CollectionMenu({ collection }: { collection: Collection }) {
 
   const handleRename = async () => {
     if (!newName.trim()) return;
-    await fetch(`/api/collections/${collection.id}`, {
+    const res = await fetch(`/api/collections/${collection.id}`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ name: newName.trim() }),
     });
+    if (!res.ok) { alert("Failed to rename collection"); return; }
     setIsRenaming(false);
     setMenuOpen(false);
     router.refresh();
@@ -30,6 +31,7 @@ export function CollectionMenu({ collection }: { collection: Collection }) {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ is_public: !collection.is_public }),
     });
+    if (!res.ok) { alert("Failed to update sharing"); return; }
     const data = await res.json();
     if (data.share_slug) {
       setShareUrl(`${window.location.origin}/share/${data.share_slug}`);
@@ -41,7 +43,8 @@ export function CollectionMenu({ collection }: { collection: Collection }) {
 
   const handleDelete = async () => {
     if (!confirm(`Delete "${collection.name}"? Bookmarks will become uncategorized.`)) return;
-    await fetch(`/api/collections/${collection.id}`, { method: "DELETE" });
+    const res = await fetch(`/api/collections/${collection.id}`, { method: "DELETE" });
+    if (!res.ok) { alert("Failed to delete collection"); return; }
     // Clear collection filter if viewing this collection
     if (searchParams.get("collection") === collection.id) {
       router.push("/");

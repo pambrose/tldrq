@@ -6,6 +6,7 @@ import type { Bookmark, Collection } from "@/types/database";
 import { timeAgo } from "@/lib/utils/time";
 import { PRIORITY_BORDER, PRIORITY_LEVELS, PRIORITY_LABELS } from "@/lib/utils/priority";
 import type { Priority } from "@/lib/utils/priority";
+import { getDisplayUrl } from "@/lib/utils/ui";
 import { PriorityBadge } from "./priority-badge";
 import { RepoStats } from "./repo-stats";
 
@@ -23,31 +24,34 @@ export function BookmarkCard({
   const [deleting, setDeleting] = useState(false);
 
   const toggleRead = async () => {
-    await fetch(`/api/bookmarks/${bookmark.id}`, {
+    const res = await fetch(`/api/bookmarks/${bookmark.id}`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ is_read: !bookmark.is_read }),
     });
+    if (!res.ok) { alert("Failed to update read status"); return; }
     router.refresh();
   };
 
   const moveToCollection = async (collectionId: string | null) => {
-    await fetch(`/api/bookmarks/${bookmark.id}`, {
+    const res = await fetch(`/api/bookmarks/${bookmark.id}`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ collection_id: collectionId }),
     });
+    if (!res.ok) { alert("Failed to move bookmark"); return; }
     setMoveMenuOpen(false);
     setMenuOpen(false);
     router.refresh();
   };
 
   const changePriority = async (newPriority: Priority) => {
-    await fetch(`/api/bookmarks/${bookmark.id}`, {
+    const res = await fetch(`/api/bookmarks/${bookmark.id}`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ priority: newPriority }),
     });
+    if (!res.ok) { alert("Failed to change priority"); return; }
     setPriorityMenuOpen(false);
     setMenuOpen(false);
     router.refresh();
@@ -57,7 +61,8 @@ export function BookmarkCard({
     if (!confirm("Delete this bookmark?")) return;
     setDeleting(true);
     setMenuOpen(false);
-    await fetch(`/api/bookmarks/${bookmark.id}`, { method: "DELETE" });
+    const res = await fetch(`/api/bookmarks/${bookmark.id}`, { method: "DELETE" });
+    if (!res.ok) { setDeleting(false); alert("Failed to delete bookmark"); return; }
     router.refresh();
   };
 
@@ -65,13 +70,7 @@ export function BookmarkCard({
     ? collections.find((c) => c.id === bookmark.collection_id)?.name ?? null
     : null;
 
-  const displayUrl = (() => {
-    try {
-      return new URL(bookmark.url).hostname;
-    } catch {
-      return bookmark.url;
-    }
-  })();
+  const displayUrl = getDisplayUrl(bookmark.url);
 
   // Priority border takes precedence; normal falls back to unread blue
   const borderClass = (() => {

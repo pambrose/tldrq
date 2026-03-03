@@ -2,6 +2,7 @@
 
 import { useRouter, useSearchParams } from "next/navigation";
 import { PRIORITY_LEVELS, PRIORITY_LABELS } from "@/lib/utils/priority";
+import { pillClass } from "@/lib/utils/ui";
 
 export function FilterTabs() {
   const router = useRouter();
@@ -19,13 +20,6 @@ export function FilterTabs() {
     }
     router.push(`/?${params.toString()}`);
   };
-
-  const pillClass = (active: boolean) =>
-    `rounded-full px-3 py-1 text-sm font-medium transition-colors ${
-      active
-        ? "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300"
-        : "bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700"
-    }`;
 
   return (
     <div className="space-y-2">

@@ -65,7 +65,7 @@ export function UrlInput({ collections }: { collections: Collection[] }) {
         onChange={(e) => setCollectionId(e.target.value)}
         className="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100"
       >
-        <option value="">No collection</option>
+        <option value="">Auto-categorize</option>
         {collections.map((c) => (
           <option key={c.id} value={c.id}>
             {c.name}

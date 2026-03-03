@@ -1,16 +1,11 @@
 import type { Bookmark } from "@/types/database";
 import { PRIORITY_BORDER } from "@/lib/utils/priority";
+import { getDisplayUrl } from "@/lib/utils/ui";
 import { PriorityBadge } from "./priority-badge";
 import { RepoStats } from "./repo-stats";
 
 export function BookmarkCardReadonly({ bookmark }: { bookmark: Bookmark }) {
-  const displayUrl = (() => {
-    try {
-      return new URL(bookmark.url).hostname;
-    } catch {
-      return bookmark.url;
-    }
-  })();
+  const displayUrl = getDisplayUrl(bookmark.url);
 
   return (
     <div className={`rounded-lg border bg-white p-4 dark:border-gray-700 dark:bg-gray-900 ${PRIORITY_BORDER[bookmark.priority] || ""}`}>

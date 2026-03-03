@@ -157,13 +157,21 @@ function getYouTubeVideoId(url: string): string | null {
   }
 }
 
-/** Generic oEmbed fetch with timeout — returns parsed JSON or null on failure */
+/** Fetch with a 5-second abort timeout */
+async function fetchWithTimeout(url: string, init?: RequestInit): Promise<Response> {
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 5000);
+  try {
+    return await fetch(url, { ...init, signal: controller.signal });
+  } finally {
+    clearTimeout(timeout);
+  }
+}
+
+/** Generic oEmbed fetch — returns parsed JSON or null on failure */
 async function fetchOEmbedData(oembedUrl: string): Promise<Record<string, unknown> | null> {
   try {
-    const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 5000);
-    const response = await fetch(oembedUrl, { signal: controller.signal });
-    clearTimeout(timeout);
+    const response = await fetchWithTimeout(oembedUrl);
     if (!response.ok) return null;
     return await response.json();
   } catch {
@@ -171,15 +179,22 @@ async function fetchOEmbedData(oembedUrl: string): Promise<Record<string, unknow
   }
 }
 
+/** Fetch oEmbed data and map to OGMetadata using the standard title/author/thumbnail fields */
+async function fetchOEmbedMetadata(oembedUrl: string, siteName: string): Promise<OGMetadata> {
+  const data = await fetchOEmbedData(oembedUrl);
+  return {
+    title: (data?.title as string) || null,
+    description: data?.author_name ? `By ${data.author_name}` : null,
+    image_url: (data?.thumbnail_url as string) || null,
+    site_name: siteName,
+  };
+}
+
 /** Generic OG metadata scraper for sites without oEmbed */
 async function fetchGenericOGMetadata(url: string): Promise<OGMetadata> {
-  const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), 5000);
-  const response = await fetch(url, {
-    signal: controller.signal,
+  const response = await fetchWithTimeout(url, {
     headers: { "User-Agent": "ReadingListBot/1.0" },
   });
-  clearTimeout(timeout);
 
   if (!response.ok) {
     return { title: null, description: null, image_url: null, site_name: null };
@@ -215,26 +230,18 @@ async function fetchGenericOGMetadata(url: string): Promise<OGMetadata> {
 // --- Platform-specific fetch functions ---
 
 async function fetchYouTubeMetadata(url: string, videoId: string): Promise<OGMetadata> {
-  const data = await fetchOEmbedData(
-    `https://www.youtube.com/oembed?url=${encodeURIComponent(url)}&format=json`
+  const meta = await fetchOEmbedMetadata(
+    `https://www.youtube.com/oembed?url=${encodeURIComponent(url)}&format=json`,
+    "YouTube"
   );
-  return {
-    title: (data?.title as string) || null,
-    description: data?.author_name ? `By ${data.author_name}` : null,
-    image_url: `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`,
-    site_name: "YouTube",
-  };
+  return { ...meta, image_url: `https://img.youtube.com/vi/${videoId}/hqdefault.jpg` };
 }
 
 async function fetchTwitterImage(url: string): Promise<string | null> {
   try {
-    const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 5000);
-    const response = await fetch(url, {
-      signal: controller.signal,
+    const response = await fetchWithTimeout(url, {
       headers: { "User-Agent": "ReadingListBot/1.0" },
     });
-    clearTimeout(timeout);
     if (!response.ok) return null;
     const html = await response.text();
     const $ = cheerio.load(html);
@@ -245,16 +252,13 @@ async function fetchTwitterImage(url: string): Promise<string | null> {
 }
 
 async function fetchTwitterMetadata(url: string): Promise<OGMetadata> {
-  const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), 5000);
   const oembedUrl = `https://publish.twitter.com/oembed?url=${encodeURIComponent(url)}&omit_script=true`;
 
   // Fetch oEmbed and OG image in parallel
   const [oembedResponse, imageUrl] = await Promise.all([
-    fetch(oembedUrl, { signal: controller.signal }),
+    fetchWithTimeout(oembedUrl),
     fetchTwitterImage(url),
   ]);
-  clearTimeout(timeout);
 
   if (!oembedResponse.ok) return { title: null, description: null, image_url: imageUrl, site_name: "X" };
 
@@ -272,39 +276,16 @@ async function fetchTwitterMetadata(url: string): Promise<OGMetadata> {
 }
 
 async function fetchVimeoMetadata(url: string): Promise<OGMetadata> {
-  const data = await fetchOEmbedData(
-    `https://vimeo.com/api/oembed.json?url=${encodeURIComponent(url)}`
-  );
-  return {
-    title: (data?.title as string) || null,
-    description: data?.author_name ? `By ${data.author_name}` : null,
-    image_url: (data?.thumbnail_url as string) || null,
-    site_name: "Vimeo",
-  };
+  return fetchOEmbedMetadata(`https://vimeo.com/api/oembed.json?url=${encodeURIComponent(url)}`, "Vimeo");
 }
 
 async function fetchTikTokMetadata(url: string): Promise<OGMetadata> {
-  const data = await fetchOEmbedData(
-    `https://www.tiktok.com/oembed?url=${encodeURIComponent(url)}`
-  );
-  return {
-    title: (data?.title as string) || null,
-    description: data?.author_name ? `By ${data.author_name}` : null,
-    image_url: (data?.thumbnail_url as string) || null,
-    site_name: "TikTok",
-  };
+  return fetchOEmbedMetadata(`https://www.tiktok.com/oembed?url=${encodeURIComponent(url)}`, "TikTok");
 }
 
 async function fetchSpotifyMetadata(url: string): Promise<OGMetadata> {
-  const data = await fetchOEmbedData(
-    `https://open.spotify.com/oembed?url=${encodeURIComponent(url)}`
-  );
-  return {
-    title: (data?.title as string) || null,
-    description: null,
-    image_url: (data?.thumbnail_url as string) || null,
-    site_name: "Spotify",
-  };
+  const meta = await fetchOEmbedMetadata(`https://open.spotify.com/oembed?url=${encodeURIComponent(url)}`, "Spotify");
+  return { ...meta, description: null };
 }
 
 async function fetchRedditMetadata(url: string): Promise<OGMetadata> {
@@ -325,15 +306,7 @@ async function fetchRedditMetadata(url: string): Promise<OGMetadata> {
 }
 
 async function fetchSoundCloudMetadata(url: string): Promise<OGMetadata> {
-  const data = await fetchOEmbedData(
-    `https://soundcloud.com/oembed?url=${encodeURIComponent(url)}&format=json`
-  );
-  return {
-    title: (data?.title as string) || null,
-    description: data?.author_name ? `By ${data.author_name}` : null,
-    image_url: (data?.thumbnail_url as string) || null,
-    site_name: "SoundCloud",
-  };
+  return fetchOEmbedMetadata(`https://soundcloud.com/oembed?url=${encodeURIComponent(url)}&format=json`, "SoundCloud");
 }
 
 async function fetchFlickrMetadata(url: string): Promise<OGMetadata> {
@@ -350,15 +323,7 @@ async function fetchFlickrMetadata(url: string): Promise<OGMetadata> {
 }
 
 async function fetchSlideShareMetadata(url: string): Promise<OGMetadata> {
-  const data = await fetchOEmbedData(
-    `https://www.slideshare.net/api/oembed/2?url=${encodeURIComponent(url)}&format=json`
-  );
-  return {
-    title: (data?.title as string) || null,
-    description: data?.author_name ? `By ${data.author_name}` : null,
-    image_url: (data?.thumbnail_url as string) || null,
-    site_name: "SlideShare",
-  };
+  return fetchOEmbedMetadata(`https://www.slideshare.net/api/oembed/2?url=${encodeURIComponent(url)}&format=json`, "SlideShare");
 }
 
 async function fetchGitHubMetadata(url: string): Promise<OGMetadata> {
@@ -368,13 +333,9 @@ async function fetchGitHubMetadata(url: string): Promise<OGMetadata> {
     if (parts.length < 2) return await fetchGenericOGMetadata(url);
     const [owner, repo] = parts;
 
-    const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 5000);
-    const response = await fetch(`https://api.github.com/repos/${owner}/${repo}`, {
-      signal: controller.signal,
+    const response = await fetchWithTimeout(`https://api.github.com/repos/${owner}/${repo}`, {
       headers: { "Accept": "application/vnd.github.v3+json", "User-Agent": "ReadingListBot/1.0" },
     });
-    clearTimeout(timeout);
 
     if (!response.ok) return await fetchGenericOGMetadata(url);
 
@@ -400,13 +361,10 @@ async function fetchGitLabMetadata(url: string): Promise<OGMetadata> {
     if (parts.length < 2) return await fetchGenericOGMetadata(url);
     const projectPath = parts.slice(0, 2).join("/");
 
-    const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 5000);
-    const response = await fetch(
+    const response = await fetchWithTimeout(
       `https://gitlab.com/api/v4/projects/${encodeURIComponent(projectPath)}`,
-      { signal: controller.signal, headers: { "User-Agent": "ReadingListBot/1.0" } },
+      { headers: { "User-Agent": "ReadingListBot/1.0" } },
     );
-    clearTimeout(timeout);
 
     if (!response.ok) return await fetchGenericOGMetadata(url);
 
