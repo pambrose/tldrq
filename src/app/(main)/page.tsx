@@ -4,6 +4,7 @@ import { CollectionTabs } from "@/components/collections/collection-tabs";
 import { FilterTabs } from "@/components/bookmarks/filter-tabs";
 import { BookmarkList } from "@/components/bookmarks/bookmark-list";
 import { CollectionMenu } from "@/components/collections/collection-menu";
+import { RefreshButton } from "@/components/bookmarks/refresh-button";
 import { PRIORITY_LEVELS } from "@/lib/utils/priority";
 import type { Bookmark, Collection } from "@/types/database";
 
@@ -83,6 +84,14 @@ export default async function DashboardPage({
           <FilterTabs />
         </div>
       </details>
+
+      {/* Count + refresh */}
+      <div className="flex items-center justify-between">
+        <span className="text-xs text-gray-500 dark:text-gray-400">
+          {typedBookmarks.length} bookmark{typedBookmarks.length !== 1 ? "s" : ""}
+        </span>
+        <RefreshButton />
+      </div>
 
       {/* Bookmark list */}
       <BookmarkList bookmarks={typedBookmarks} collections={typedCollections} />
