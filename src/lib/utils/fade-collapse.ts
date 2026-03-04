@@ -3,27 +3,38 @@ export function fadeCollapse(element: HTMLElement): Promise<void> {
     const height = element.offsetHeight;
     const style = element.style;
 
-    // Set initial values for transition
+    // Phase 1: Slide off to the right
+    style.transition = "transform 300ms ease-in, opacity 300ms ease-in";
     style.overflow = "hidden";
     style.height = `${height}px`;
-    style.transition = "opacity 200ms ease-out, height 300ms ease-in-out 100ms, margin 300ms ease-in-out 100ms, padding 300ms ease-in-out 100ms";
 
-    // Force reflow so the browser registers the starting values
+    // Force reflow
     element.offsetHeight;
 
-    // Animate to collapsed state
+    style.transform = "translateX(100%)";
     style.opacity = "0";
-    style.height = "0";
-    style.marginTop = "0";
-    style.marginBottom = "0";
-    style.paddingTop = "0";
-    style.paddingBottom = "0";
 
-    element.addEventListener("transitionend", function handler(e) {
-      if (e.propertyName === "height") {
-        element.removeEventListener("transitionend", handler);
-        resolve();
-      }
+    element.addEventListener("transitionend", function slideHandler(e) {
+      if (e.propertyName !== "transform") return;
+      element.removeEventListener("transitionend", slideHandler);
+
+      // Phase 2: Collapse the gap
+      style.transition = "height 250ms ease-in-out, margin 250ms ease-in-out, padding 250ms ease-in-out";
+
+      element.offsetHeight;
+
+      style.height = "0";
+      style.marginTop = "0";
+      style.marginBottom = "0";
+      style.paddingTop = "0";
+      style.paddingBottom = "0";
+
+      element.addEventListener("transitionend", function collapseHandler(e) {
+        if (e.propertyName === "height") {
+          element.removeEventListener("transitionend", collapseHandler);
+          resolve();
+        }
+      });
     });
   });
 }
