@@ -144,7 +144,7 @@ export function BookmarkCard({
         </div>
 
         {/* Overflow menu */}
-        <div className="relative flex-shrink-0">
+        <div className="absolute top-2 right-2">
           <button
             onClick={() => { setMenuOpen(!menuOpen); setMoveMenuOpen(false); setPriorityMenuOpen(false); }}
             className="rounded p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-600 dark:text-gray-500 dark:hover:bg-gray-700 dark:hover:text-gray-300"

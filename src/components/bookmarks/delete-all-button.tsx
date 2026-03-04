@@ -31,7 +31,7 @@ export function DeleteAllButton({ ids }: { ids: string[] }) {
       onClick={handleDeleteAll}
       disabled={deleting || ids.length === 0}
       aria-label="Delete displayed bookmarks"
-      title="Delete displayed bookmarks"
+      title="Delete displayed URLs"
       className="rounded-lg p-1 text-gray-400 hover:bg-gray-100 hover:text-red-600 dark:text-gray-500 dark:hover:bg-gray-700 dark:hover:text-red-400 transition-colors disabled:opacity-40 disabled:pointer-events-none"
     >
       {deleting ? (
