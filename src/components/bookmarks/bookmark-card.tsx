@@ -157,6 +157,30 @@ export function BookmarkCard({
           {menuOpen && (
             <div className="absolute right-0 top-8 z-10 w-48 rounded-lg border bg-white py-1 shadow-lg dark:border-gray-600 dark:bg-gray-800">
               <button
+                onClick={() => { setPriorityMenuOpen(!priorityMenuOpen); setMoveMenuOpen(false); }}
+                className="w-full px-3 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-gray-700"
+              >
+                Set priority
+              </button>
+              {priorityMenuOpen && (
+                <div className="border-t dark:border-gray-600">
+                  {PRIORITY_LEVELS.map((p) => (
+                    <button
+                      key={p}
+                      onClick={() => changePriority(p)}
+                      className={`w-full px-6 py-1.5 text-left text-xs hover:bg-gray-50 dark:hover:bg-gray-700 ${
+                        bookmark.priority === p
+                          ? "font-semibold text-blue-600 dark:text-blue-400"
+                          : "text-gray-600 dark:text-gray-400"
+                      }`}
+                    >
+                      {PRIORITY_LABELS[p]}
+                      {bookmark.priority === p && " \u2713"}
+                    </button>
+                  ))}
+                </div>
+              )}
+              <button
                 onClick={() => { setMoveMenuOpen(!moveMenuOpen); setPriorityMenuOpen(false); }}
                 className="w-full px-3 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-gray-700"
               >
@@ -185,30 +209,6 @@ export function BookmarkCard({
                       }`}
                     >
                       {c.name}{bookmark.collection_id === c.id && " \u2713"}
-                    </button>
-                  ))}
-                </div>
-              )}
-              <button
-                onClick={() => { setPriorityMenuOpen(!priorityMenuOpen); setMoveMenuOpen(false); }}
-                className="w-full px-3 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-gray-700"
-              >
-                Set priority
-              </button>
-              {priorityMenuOpen && (
-                <div className="border-t dark:border-gray-600">
-                  {PRIORITY_LEVELS.map((p) => (
-                    <button
-                      key={p}
-                      onClick={() => changePriority(p)}
-                      className={`w-full px-6 py-1.5 text-left text-xs hover:bg-gray-50 dark:hover:bg-gray-700 ${
-                        bookmark.priority === p
-                          ? "font-semibold text-blue-600 dark:text-blue-400"
-                          : "text-gray-600 dark:text-gray-400"
-                      }`}
-                    >
-                      {PRIORITY_LABELS[p]}
-                      {bookmark.priority === p && " \u2713"}
                     </button>
                   ))}
                 </div>
