@@ -2,7 +2,7 @@
 
 import { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
-import { disintegrate } from "@/lib/utils/disintegrate";
+import { fadeCollapse } from "@/lib/utils/fade-collapse";
 import type { Bookmark, Collection } from "@/types/database";
 import { timeAgo } from "@/lib/utils/time";
 import { PRIORITY_BORDER, PRIORITY_LEVELS, PRIORITY_LABELS } from "@/lib/utils/priority";
@@ -66,7 +66,7 @@ export function BookmarkCard({
     // Run API call and animation concurrently for instant visual feedback
     const [res] = await Promise.all([
       fetch(`/api/bookmarks/${bookmark.id}`, { method: "DELETE" }),
-      cardRef.current ? disintegrate(cardRef.current) : Promise.resolve(),
+      cardRef.current ? fadeCollapse(cardRef.current) : Promise.resolve(),
     ]);
     if (!res.ok) { alert("Failed to delete bookmark"); }
     router.refresh();
