@@ -71,6 +71,18 @@ function createWindow() {
 
   mainWindow.loadURL(SITE_URL);
 
+  // Make header draggable for window movement (re-inject on every navigation)
+  const injectDragCSS = () => {
+    mainWindow.webContents.insertCSS(`
+      header { -webkit-app-region: drag; }
+      header button, header a, header input, header select, header [role="button"] {
+        -webkit-app-region: no-drag;
+      }
+    `);
+  };
+  mainWindow.webContents.on("did-finish-load", injectDragCSS);
+  mainWindow.webContents.on("did-navigate-in-page", injectDragCSS);
+
   // Intercept Supabase OAuth navigations — redirect to system browser
   mainWindow.webContents.on("will-navigate", (event, url) => {
     if (url.includes("supabase.co/auth")) {
