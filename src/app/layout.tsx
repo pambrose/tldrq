@@ -15,6 +15,9 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
     title: "tldrq.com",
     description: "The last tab you’ll ever need",
+    icons: {
+        icon: "/favicon.ico?v=2",
+    },
 };
 
 export default function RootLayout({
