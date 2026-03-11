@@ -39,10 +39,10 @@ export async function GET(request: Request) {
         });
       }
 
-      // Redirect to custom protocol — Electron catches this
+      // Redirect to desktop auth page with tokens
       const { access_token, refresh_token } = sessionData.session;
       return NextResponse.redirect(
-        `tldrq://auth/callback?access_token=${encodeURIComponent(access_token)}&refresh_token=${encodeURIComponent(refresh_token)}`
+        `${origin}/auth/desktop?access_token=${encodeURIComponent(access_token)}&refresh_token=${encodeURIComponent(refresh_token)}`
       );
     }
   }
