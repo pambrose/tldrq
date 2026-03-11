@@ -1,10 +1,10 @@
 "use client";
 
-import { useEffect } from "react";
+import { Suspense, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 
-export default function LoginDesktopPage() {
+function LoginDesktopContent() {
   const searchParams = useSearchParams();
 
   useEffect(() => {
@@ -24,5 +24,13 @@ export default function LoginDesktopPage() {
     <div className="flex min-h-screen items-center justify-center">
       <p className="text-gray-500">Redirecting to sign in...</p>
     </div>
+  );
+}
+
+export default function LoginDesktopPage() {
+  return (
+    <Suspense>
+      <LoginDesktopContent />
+    </Suspense>
   );
 }

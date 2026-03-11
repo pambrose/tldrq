@@ -1,10 +1,10 @@
 "use client";
 
-import { useEffect } from "react";
+import { Suspense, useEffect } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 
-export default function DesktopAuthPage() {
+function DesktopAuthContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
 
@@ -26,5 +26,13 @@ export default function DesktopAuthPage() {
     <div className="flex min-h-screen items-center justify-center">
       <p className="text-gray-500">Signing in...</p>
     </div>
+  );
+}
+
+export default function DesktopAuthPage() {
+  return (
+    <Suspense>
+      <DesktopAuthContent />
+    </Suspense>
   );
 }
