@@ -9,6 +9,8 @@ import { ExportButton } from "@/components/bookmarks/export-button";
 import { ImportButton } from "@/components/bookmarks/import-button";
 import { DeleteAllButton } from "@/components/bookmarks/delete-all-button";
 import { ShareButton } from "@/components/share-button";
+import { RefreshProvider } from "@/components/bookmarks/refresh-context";
+import { BookmarkListWrapper } from "@/components/bookmarks/bookmark-list-wrapper";
 import { SearchInput } from "@/components/bookmarks/search-input";
 import { PRIORITY_LEVELS } from "@/lib/utils/priority";
 import type { Bookmark, Collection } from "@/types/database";
@@ -99,21 +101,25 @@ export default async function DashboardPage({
       </details>
 
       {/* Count + refresh */}
-      <div className="flex items-center justify-between">
-        <span className="text-xs text-gray-500 dark:text-gray-400">
-          {typedBookmarks.length} bookmark{typedBookmarks.length !== 1 ? "s" : ""}
-        </span>
-        <div className="flex items-center gap-1">
-          <DeleteAllButton ids={typedBookmarks.map((b) => b.id)} />
-          <ImportButton collections={typedCollections} />
-          <ExportButton urls={typedBookmarks.map((b) => b.url)} />
-          <ShareButton />
-          <RefreshButton />
+      <RefreshProvider>
+        <div className="flex items-center justify-between">
+          <span className="text-xs text-gray-500 dark:text-gray-400">
+            {typedBookmarks.length} bookmark{typedBookmarks.length !== 1 ? "s" : ""}
+          </span>
+          <div className="flex items-center gap-1">
+            <DeleteAllButton ids={typedBookmarks.map((b) => b.id)} />
+            <ImportButton collections={typedCollections} />
+            <ExportButton urls={typedBookmarks.map((b) => b.url)} />
+            <ShareButton />
+            <RefreshButton />
+          </div>
         </div>
-      </div>
 
-      {/* Bookmark list */}
-      <BookmarkList bookmarks={typedBookmarks} collections={typedCollections} />
+        {/* Bookmark list */}
+        <BookmarkListWrapper>
+          <BookmarkList bookmarks={typedBookmarks} collections={typedCollections} />
+        </BookmarkListWrapper>
+      </RefreshProvider>
     </div>
   );
 }

@@ -1,33 +1,19 @@
 "use client";
 
-import { useState, useTransition } from "react";
-import { useRouter } from "next/navigation";
+import { useRefresh } from "./refresh-context";
 
 export function RefreshButton() {
-  const router = useRouter();
-  const [isPending, startTransition] = useTransition();
-  const [spinning, setSpinning] = useState(false);
-
-  const handleRefresh = () => {
-    setSpinning(true);
-    startTransition(() => {
-      router.refresh();
-    });
-    // Keep spinning for at least 600ms so it's visible
-    setTimeout(() => setSpinning(false), 600);
-  };
-
-  const isAnimating = spinning || isPending;
+  const { isPending, refresh } = useRefresh();
 
   return (
     <button
-      onClick={handleRefresh}
+      onClick={refresh}
       aria-label="Refresh displayed URLs"
       title="Refresh displayed URLs"
       className="rounded-lg p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-600 dark:text-gray-500 dark:hover:bg-gray-700 dark:hover:text-gray-300 transition-colors"
     >
       <svg
-        className={`h-4 w-4 ${isAnimating ? "animate-spin" : ""}`}
+        className={`h-4 w-4 ${isPending ? "animate-spin" : ""}`}
         fill="none"
         viewBox="0 0 24 24"
         stroke="currentColor"
