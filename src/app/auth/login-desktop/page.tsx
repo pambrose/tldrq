@@ -12,11 +12,14 @@ function LoginDesktopContent() {
     const port = searchParams.get("port");
     if (provider && port) {
       const supabase = createClient();
-      supabase.auth.signInWithOAuth({
-        provider,
-        options: {
-          redirectTo: `${window.location.origin}/auth/callback-desktop?port=${port}`,
-        },
+      // Clear any stale session/PKCE state before starting fresh OAuth
+      supabase.auth.signOut().finally(() => {
+        supabase.auth.signInWithOAuth({
+          provider,
+          options: {
+            redirectTo: `${window.location.origin}/auth/callback-desktop?port=${port}`,
+          },
+        });
       });
     }
   }, [searchParams]);
