@@ -72,6 +72,15 @@ export function ShareButton() {
 
       {showForm && (
         <div className="absolute right-0 top-8 z-10 rounded-lg border bg-white p-3 shadow-lg dark:border-gray-600 dark:bg-gray-800" style={{ width: "360px" }}>
+          <button
+            onClick={handleClose}
+            className="absolute right-2 top-2 text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300"
+            aria-label="Close share dialog"
+          >
+            <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
           {shareUrl ? (
             <>
               <p className="mb-2 text-xs font-medium text-gray-700 dark:text-gray-300">Share link</p>
