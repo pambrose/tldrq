@@ -22,6 +22,7 @@ Save, organize, and track your reading with a clean, minimal web app.
 - **Database & Auth**: [Supabase](https://supabase.com) (PostgreSQL, Row Level Security, OAuth)
 - **Styling**: [Tailwind CSS v4](https://tailwindcss.com)
 - **Metadata**: [Cheerio](https://cheerio.js.org) for OG tag parsing
+- **Desktop**: [Electron](https://www.electronjs.org) (macOS app)
 - **Deployment**: [Vercel](https://vercel.com)
 
 ## Getting Started
@@ -116,6 +117,31 @@ Once you have your Vercel production URL (e.g. `https://reading-list-abc.vercel.
 3. Save a bookmark, verify OG metadata appears
 4. Create a collection, toggle it public, open the share URL in an incognito window
 
+## Desktop App (macOS)
+
+An Electron wrapper that loads tldrq.com with native macOS integration. OAuth opens in the system browser (for passkey support) and hands the session back to the app via a local HTTP server.
+
+### Build the `.dmg`
+
+```bash
+cd electron
+npm install
+npm run build
+```
+
+The output is in `electron/dist/`. Open the `.dmg` and drag `tldrq.app` to Applications.
+
+### Development
+
+```bash
+cd electron
+npm start
+```
+
+### Supabase Setup
+
+Add `https://your-domain.com/auth/callback-desktop` to **Supabase → Authentication → URL Configuration → Redirect URLs**.
+
 ## Project Structure
 
 ```
@@ -138,4 +164,8 @@ src/
 supabase/
   schema.sql         # Combined database schema
   migrations/        # Individual migration files
+electron/
+  main.js            # Electron main process
+  package.json       # Electron dependencies and build config
+  icon.icns          # macOS app icon
 ```
