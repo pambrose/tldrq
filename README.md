@@ -12,7 +12,7 @@ Save, organize, and track your reading with a clean, minimal web app.
 - **Read/unread tracking** — mark bookmarks as read with visual indicators
 - **Collapsible filters** — filter by collection, read status, priority; sort by date or priority
 - **Dark/light mode** — toggle with localStorage persistence, dark mode by default
-- **Public sharing** — share collections via public URL
+- **Public sharing** — share collections via public URL or share filtered views with custom titles
 - **Export** — download displayed URLs as a text file
 - **OAuth login** — Google and GitHub authentication via Supabase
 
@@ -38,7 +38,6 @@ Create a `.env.local` file:
 ```
 NEXT_PUBLIC_SUPABASE_URL=your-supabase-url
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your-supabase-anon-key
-SLACK_WEBHOOK_URL=https://hooks.slack.com/services/...  # Optional — bookmark notifications
 ```
 
 ### Database Setup
@@ -46,11 +45,8 @@ SLACK_WEBHOOK_URL=https://hooks.slack.com/services/...  # Optional — bookmark 
 Run the schema migration against your Supabase project:
 
 ```bash
-# Apply schema
-psql -f supabase/migrations/001_schema.sql
-
-# To reset (drops all tables)
-psql -f supabase/drop_all.sql
+# Apply full schema (drops and recreates all tables)
+psql -f supabase/schema.sql
 ```
 
 ### Development
@@ -74,7 +70,7 @@ npm start
 ### 1. Set Up Supabase
 
 1. Go to [supabase.com](https://supabase.com) and create a new project
-2. In the SQL Editor, paste and run the contents of `supabase/migrations/001_schema.sql`
+2. In the SQL Editor, paste and run the contents of `supabase/schema.sql`
 3. Copy your **Project URL** and **anon public key** from Settings → API
 
 ### 2. Configure OAuth Providers
@@ -102,7 +98,6 @@ In the Supabase dashboard under Authentication → Providers:
 3. Add environment variables:
     - `NEXT_PUBLIC_SUPABASE_URL` → your Supabase project URL
     - `NEXT_PUBLIC_SUPABASE_ANON_KEY` → your Supabase anon key
-    - `SLACK_WEBHOOK_URL` → (optional) Slack incoming webhook for bookmark notifications
 4. Deploy
 
 ### 4. Update Supabase Redirect URLs
@@ -130,7 +125,7 @@ src/
     api/             # REST endpoints (bookmarks, collections, metadata)
     auth/            # OAuth callback
     login/           # Login page
-    share/[slug]/    # Public shared collections
+    share/[slug]/    # Public shared collections and filtered views
   components/
     auth/            # Login buttons
     bookmarks/       # Card, list, filters, URL input, export, refresh
@@ -141,6 +136,6 @@ src/
     utils/           # Metadata fetching, time formatting, priority config
   types/             # TypeScript interfaces
 supabase/
-  migrations/        # SQL schema
-  drop_all.sql       # Reset script
+  schema.sql         # Combined database schema
+  migrations/        # Individual migration files
 ```

@@ -27,15 +27,15 @@ A bookmark manager built with Next.js 16 (App Router), Supabase (PostgreSQL + Au
 - `src/components/bookmarks/bookmark-card.tsx` — Main bookmark display with menus for move/priority/delete
 - `src/components/layout/theme-toggle.tsx` — Dark/light mode toggle with localStorage persistence
 - `src/types/database.ts` — TypeScript interfaces for Bookmark and Collection
-- `supabase/migrations/001_schema.sql` — Full database schema
-- `supabase/drop_all.sql` — Reset script
+- `supabase/schema.sql` — Combined database schema (tables, RLS policies, functions)
 
 ## Data Model
 
-Two tables with Row Level Security:
+Three tables with Row Level Security:
 
 - **collections**: id, user_id, name, is_public, share_slug, created_at
-- **bookmarks**: id, user_id, collection_id, url, title, description, image_url, site_name, is_read, priority, priority_order (computed), created_at
+- **bookmarks**: id, user_id, collection_id, url, title, description, image_url, site_name, repo_stars, repo_forks, repo_language, is_read, priority, priority_order (computed), created_at
+- **shared_views**: id, user_id, slug, title, collection_id, collection_uncategorized, filter, priority, sort, search, is_active, created_at
 
 ## Features
 
@@ -49,6 +49,7 @@ Two tables with Row Level Security:
 - Collapsible filter panel (collection, read status, priority, sort)
 - Dark mode default with light mode toggle, localStorage persistence
 - Public collection sharing via slug URLs
+- Shared filtered views with custom titles and search
 - Export displayed URLs to text file
 - User profile display (name, avatar from OAuth provider)
 
