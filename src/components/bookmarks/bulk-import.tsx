@@ -227,7 +227,7 @@ export function BulkImport({
             onChange={handleFileChange}
             className="block w-full text-sm text-gray-500 file:mr-3 file:rounded-lg file:border-0 file:bg-blue-50 file:px-3 file:py-1.5 file:text-sm file:font-medium file:text-blue-600 hover:file:bg-blue-100 dark:text-gray-400 dark:file:bg-blue-900/30 dark:file:text-blue-400 dark:hover:file:bg-blue-900/50"
           />
-          <details className="mt-3">
+          <details className="mt-3" open>
             <summary className="cursor-pointer text-xs font-medium text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 select-none">
               How to gather the URLs of all your browser tabs on {os}
             </summary>
