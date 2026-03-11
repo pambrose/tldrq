@@ -227,11 +227,11 @@ export function BulkImport({
             onChange={handleFileChange}
             className="block w-full text-sm text-gray-500 file:mr-3 file:rounded-lg file:border-0 file:bg-blue-50 file:px-3 file:py-1.5 file:text-sm file:font-medium file:text-blue-600 hover:file:bg-blue-100 dark:text-gray-400 dark:file:bg-blue-900/30 dark:file:text-blue-400 dark:hover:file:bg-blue-900/50"
           />
-          <details className="mt-3" open>
-            <summary className="cursor-pointer text-xs font-medium text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 select-none">
+          <div className="mt-3">
+            <p className="mb-2 text-xs font-medium text-blue-600 dark:text-blue-400">
               How to gather the URLs of all your browser tabs on {os}
-            </summary>
-            <div className="mt-2 rounded-lg border border-gray-200 bg-gray-50 p-3 dark:border-gray-700 dark:bg-gray-800">
+            </p>
+            <div className="rounded-lg border border-gray-200 bg-gray-50 p-3 dark:border-gray-700 dark:bg-gray-800">
               <div className="mb-2 flex items-center gap-2">
                 <label className="text-xs text-gray-600 dark:text-gray-400">Browser:</label>
                 <select
@@ -277,7 +277,7 @@ export function BulkImport({
                 </div>
               )}
             </div>
-          </details>
+          </div>
         </div>
       )}
 
