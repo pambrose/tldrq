@@ -12,7 +12,24 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Scratch files written by the Remember plugin.
+    ".remember/**",
   ]),
+  {
+    // Bookmark thumbnails come from arbitrary user-submitted domains
+    // (YouTube, Twitter OG, GitHub avatars, scraped OG tags), so next/image
+    // would need a wildcard remote pattern to cover them.
+    rules: {
+      "@next/next/no-img-element": "off",
+    },
+  },
+  {
+    // The Electron main process runs as CommonJS and relies on __dirname.
+    files: ["electron/**/*.js"],
+    rules: {
+      "@typescript-eslint/no-require-imports": "off",
+    },
+  },
 ]);
 
 export default eslintConfig;

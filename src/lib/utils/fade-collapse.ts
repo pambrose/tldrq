@@ -9,7 +9,7 @@ export function fadeCollapse(element: HTMLElement): Promise<void> {
     style.height = `${height}px`;
 
     // Force reflow
-    element.offsetHeight;
+    void element.offsetHeight;
 
     style.transform = "translateX(100%)";
     style.opacity = "0";
@@ -21,7 +21,8 @@ export function fadeCollapse(element: HTMLElement): Promise<void> {
       // Phase 2: Collapse the gap
       style.transition = "height 250ms ease-in-out, margin 250ms ease-in-out, padding 250ms ease-in-out";
 
-      element.offsetHeight;
+      // Force reflow
+      void element.offsetHeight;
 
       style.height = "0";
       style.marginTop = "0";
