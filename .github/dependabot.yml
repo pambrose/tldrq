@@ -1,0 +1,54 @@
+# Dependabot version updates. Alerts and security updates are enabled separately in the
+# repository settings. Each update waits 7 days after its release, so a compromised or
+# broken version has time to be caught and pulled before a PR proposes it; security
+# updates skip the cooldown. PRs against the root package run the CI lint and build.
+version: 2
+
+updates:
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+    cooldown:
+      default-days: 7
+    groups:
+      # Minor and patch updates land together in one PR.
+      npm-minor-and-patch:
+        patterns: ["*"]
+        update-types: [minor, patch]
+      # next and eslint-config-next are pinned to the same exact version, and react-dom
+      # requires the matching react, so a major moves each family in a single PR instead
+      # of splitting it into PRs that fail on their own.
+      next-major:
+        patterns: ["next", "eslint-config-next"]
+        update-types: [major]
+      react-major:
+        patterns: ["react", "react-dom", "@types/react", "@types/react-dom"]
+        update-types: [major]
+    ignore:
+      # @types/node tracks the Node major the app runs on (26, as in ci.yml). Moving to
+      # the next Node line is a deliberate change, not a routine bump.
+      - dependency-name: "@types/node"
+        update-types: ["version-update:semver-major"]
+
+  # The Electron desktop wrapper has its own lockfile and isn't built by CI, so check
+  # these PRs by hand with `npm start` in electron/.
+  - package-ecosystem: npm
+    directory: /electron
+    schedule:
+      interval: weekly
+    cooldown:
+      default-days: 7
+    groups:
+      electron:
+        patterns: ["*"]
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    cooldown:
+      default-days: 7
+    groups:
+      github-actions:
+        patterns: ["*"]
