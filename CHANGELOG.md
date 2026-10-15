@@ -13,6 +13,38 @@ Versions 0.1.2 and 0.1.4 were never released.
 
 For the release notes exactly as published, see [RELEASE_NOTES.md](RELEASE_NOTES.md).
 
+## [0.2.10] - 2026-10-15
+
+Security and maintenance release. No user-facing feature changes.
+
+### Added
+
+- Dependabot version updates: weekly checks for npm at the root and in `electron/`, plus
+  GitHub Actions, each with a 7-day cooldown
+- `CHANGELOG.md` and `RELEASE_NOTES.md`
+
+### Changed
+
+- Next.js and `eslint-config-next` 16.2.12 → 16.4.0; React and React DOM 19.2.8 → 19.3.0
+- `@supabase/ssr` 0.12.3 → 0.12.7; `@supabase/supabase-js` 2.110.8 → 2.117.3
+- `@types/node` 26.1.1 → 26.6.4; `@types/react` and `@types/react-dom` → 19.3.0
+- Desktop wrapper: Electron 35.7.5 → 44.7.0; electron-builder 26.8.1 → 26.15.3
+- Dependabot ignores TypeScript and ESLint major updates until the toolchain supports
+  TypeScript 7 and ESLint 10
+
+### Security
+
+- Resolves 100 Dependabot alerts (4 critical, 57 high, 33 medium, 6 low): 38 in the web
+  app and 62 in `electron/`
+- Next.js 16.4.0 fixes three critical remote code execution advisories (Image Optimization
+  API with AVIF files, `next/og` `ImageResponse`, Windows-hosted servers), SSRF in Image
+  Optimization, and SSG/ISR cache poisoning
+- sharp 0.34.5 → 0.35.5, picking up libvips, librsvg, and libheif fixes
+- undici 7.29.0 → 7.30.0, including a TLS certificate validation bypass fix
+- Lockfile updates for source-map-js, brace-expansion, js-yaml, and nanoid
+- Electron 44 fixes sandbox and context-isolation bypasses; the electron-builder update
+  brings fixed tar, xmldom, and extract-zip
+
 ## [0.2.9] - 2026-08-01
 
 Maintenance release. No user-facing feature changes.
@@ -264,6 +296,7 @@ Maintenance release. No user-facing feature changes.
 
 - Initial implementation of the Reading List web app
 
+[0.2.10]: https://github.com/pambrose/tldrq/compare/0.2.9...0.2.10
 [0.2.9]: https://github.com/pambrose/tldrq/compare/0.2.8...0.2.9
 [0.2.8]: https://github.com/pambrose/tldrq/compare/0.2.7...0.2.8
 [0.2.7]: https://github.com/pambrose/tldrq/compare/0.2.6...0.2.7
