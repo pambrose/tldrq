@@ -11,6 +11,41 @@ Versions 0.1.2 and 0.1.4 were never released.
 
 ---
 
+## v0.2.10 — 2026-10-15
+
+Security and maintenance release. No user-facing feature changes. This release clears 100 Dependabot security alerts, including three critical remote code execution advisories in Next.js.
+
+### Security
+
+- **Next.js 16.4.0** fixes three critical remote code execution advisories (Image Optimization API with AVIF files, `next/og` `ImageResponse`, Windows-hosted servers), along with SSRF in Image Optimization and SSG/ISR cache poisoning
+- **sharp** 0.34.5 → 0.35.5, picking up libvips, librsvg, and libheif fixes
+- **undici** 7.29.0 → 7.30.0, including a TLS certificate validation bypass fix
+- Lockfile updates for **source-map-js**, **brace-expansion**, **js-yaml**, and **nanoid**
+- **Electron 44** fixes sandbox and context-isolation bypasses; the **electron-builder** update brings fixed **tar**, **xmldom**, and **extract-zip**
+- In total: 100 alerts resolved (4 critical, 57 high, 33 medium, 6 low) — 38 in the web app, 62 in `electron/`
+
+### Dependencies
+
+- **Next.js** / **eslint-config-next** 16.2.12 → 16.4.0, **React** / **React DOM** 19.2.8 → 19.3.0
+- **@supabase/ssr** 0.12.3 → 0.12.7, **@supabase/supabase-js** 2.110.8 → 2.117.3
+- **@types/node** 26.1.1 → 26.6.4, **@types/react** / **@types/react-dom** → 19.3.0
+- Desktop wrapper: **Electron** 35.7.5 → 44.7.0, **electron-builder** 26.8.1 → 26.15.3
+
+### Tooling
+
+- Added Dependabot version updates: weekly checks for npm at the root and in `electron/`, plus GitHub Actions, each with a 7-day cooldown
+- Dependabot ignores TypeScript and ESLint major updates until the toolchain supports them
+- Added `CHANGELOG.md` and `RELEASE_NOTES.md`
+
+### Known limitations
+
+- TypeScript 7 and ESLint 10 remain blocked upstream. TypeScript 7 drops the JavaScript compiler API that the Next.js build type-check and `typescript-eslint` load, and `eslint-config-next` bundles an `eslint-plugin-react` that crashes on ESLint 10.
+- One medium alert remains open: `sprintf-js` in `electron/`, which has no fixed release yet. It is only used by electron-builder's download tooling and is not part of the app.
+
+**Full Changelog**: https://github.com/pambrose/tldrq/compare/0.2.9...0.2.10
+
+---
+
 ## v0.2.9 — 2026-08-01
 
 Maintenance release. No user-facing feature changes — this is a dependency refresh plus the repo's first CI setup.
