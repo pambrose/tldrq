@@ -11,6 +11,23 @@ Versions 0.1.2 and 0.1.4 were never released.
 
 ---
 
+## v0.2.11 — 2026-10-15
+
+Bug-fix release: sign-out no longer ends your sessions on other devices, and bookmark thumbnails with relative image paths now load.
+
+### Fixes
+
+- **Sign-out is local to the current browser.** The **Sign out** button and the desktop app's sign-in hand-off both called Supabase's `signOut()` with its default global scope, which revokes every session the user has. Every desktop sign-in therefore signed the user out on all their other devices. Both now end only the current browser's session.
+- **Relative thumbnail URLs are resolved.** When a page's `og:image` is a relative path (such as `/marketing/og-image.png`), it was saved as-is and then loaded from tldrq.com, which returned 404. The scraper now resolves it against the bookmarked page, and existing bookmarks are resolved when displayed, so no data migration is needed.
+
+### Behavior changes
+
+- `og:image` values that are not http(s) URLs, such as `data:` URIs, are no longer stored or displayed.
+
+**Full Changelog**: https://github.com/pambrose/tldrq/compare/0.2.10...0.2.11
+
+---
+
 ## v0.2.10 — 2026-10-15
 
 Security and maintenance release. No user-facing feature changes. This release clears 100 Dependabot security alerts, including three critical remote code execution advisories in Next.js.

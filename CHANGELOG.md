@@ -13,6 +13,24 @@ Versions 0.1.2 and 0.1.4 were never released.
 
 For the release notes exactly as published, see [RELEASE_NOTES.md](RELEASE_NOTES.md).
 
+## [0.2.11] - 2026-10-15
+
+Bug-fix release.
+
+### Fixed
+
+- Signing out, and signing in through the desktop app, now end only the current browser's
+  session. Both used Supabase's default global scope, which revoked the user's sessions on
+  every device, so each desktop sign-in signed the user out everywhere
+- Bookmark thumbnails whose `og:image` is a relative path (such as `/marketing/og-image.png`)
+  are resolved against the bookmarked page instead of loading from tldrq.com. New bookmarks
+  store the absolute URL, and existing bookmarks are resolved when displayed
+
+### Changed
+
+- `og:image` values that are not http(s) URLs, such as `data:` URIs, are no longer stored or
+  displayed
+
 ## [0.2.10] - 2026-10-15
 
 Security and maintenance release. No user-facing feature changes.
@@ -296,6 +314,7 @@ Maintenance release. No user-facing feature changes.
 
 - Initial implementation of the Reading List web app
 
+[0.2.11]: https://github.com/pambrose/tldrq/compare/0.2.10...0.2.11
 [0.2.10]: https://github.com/pambrose/tldrq/compare/0.2.9...0.2.10
 [0.2.9]: https://github.com/pambrose/tldrq/compare/0.2.8...0.2.9
 [0.2.8]: https://github.com/pambrose/tldrq/compare/0.2.7...0.2.8
