@@ -15,3 +15,16 @@ export function getDisplayUrl(url: string): string {
     return url;
   }
 }
+
+/** Resolve an og:image value against its page URL — many sites use relative paths.
+ *  Returns null for empty, unparseable, or non-http(s) values. */
+export function resolveImageUrl(src: string | null | undefined, pageUrl: string): string | null {
+  const trimmed = src?.trim();
+  if (!trimmed) return null;
+  try {
+    const resolved = new URL(trimmed, pageUrl);
+    return resolved.protocol === "http:" || resolved.protocol === "https:" ? resolved.href : null;
+  } catch {
+    return null;
+  }
+}

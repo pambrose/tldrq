@@ -7,7 +7,7 @@ import type { Bookmark, Collection } from "@/types/database";
 import { timeAgo } from "@/lib/utils/time";
 import { PRIORITY_BORDER, PRIORITY_LEVELS, PRIORITY_LABELS } from "@/lib/utils/priority";
 import type { Priority } from "@/lib/utils/priority";
-import { getDisplayUrl } from "@/lib/utils/ui";
+import { getDisplayUrl, resolveImageUrl } from "@/lib/utils/ui";
 import { PriorityBadge } from "./priority-badge";
 import { RepoStats } from "./repo-stats";
 
@@ -77,6 +77,8 @@ export function BookmarkCard({
     : null;
 
   const displayUrl = getDisplayUrl(bookmark.url);
+  // Older bookmarks may have a relative og:image stored as-is
+  const imageUrl = resolveImageUrl(bookmark.image_url, bookmark.url);
 
   // Priority border takes precedence; normal falls back to unread blue
   const borderClass = (() => {
@@ -92,10 +94,10 @@ export function BookmarkCard({
     >
       <div className="flex gap-4">
         {/* OG Image thumbnail */}
-        {bookmark.image_url && (
+        {imageUrl && (
           <div className="hidden sm:block flex-shrink-0">
             <img
-              src={bookmark.image_url}
+              src={imageUrl}
               alt=""
               className="h-20 w-28 rounded object-cover"
               onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }}
