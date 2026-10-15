@@ -2,20 +2,22 @@
 
 import type { Bookmark } from "@/types/database";
 import { PRIORITY_BORDER } from "@/lib/utils/priority";
-import { getDisplayUrl } from "@/lib/utils/ui";
+import { getDisplayUrl, resolveImageUrl } from "@/lib/utils/ui";
 import { PriorityBadge } from "./priority-badge";
 import { RepoStats } from "./repo-stats";
 
 export function BookmarkCardReadonly({ bookmark }: { bookmark: Bookmark }) {
   const displayUrl = getDisplayUrl(bookmark.url);
+  // Older bookmarks may have a relative og:image stored as-is
+  const imageUrl = resolveImageUrl(bookmark.image_url, bookmark.url);
 
   return (
     <div className={`rounded-lg border bg-white p-4 dark:border-gray-700 dark:bg-gray-900 ${PRIORITY_BORDER[bookmark.priority] || ""}`}>
       <div className="flex gap-4">
-        {bookmark.image_url && (
+        {imageUrl && (
           <div className="hidden sm:block flex-shrink-0">
             <img
-              src={bookmark.image_url}
+              src={imageUrl}
               alt=""
               className="h-20 w-28 rounded object-cover"
               onError={(e: React.SyntheticEvent<HTMLImageElement>) => {

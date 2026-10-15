@@ -8,7 +8,8 @@ export function SignOutButton() {
 
   const handleSignOut = async () => {
     const supabase = createClient();
-    await supabase.auth.signOut();
+    // Local scope: end only this browser's session, not the user's sessions on other devices
+    await supabase.auth.signOut({ scope: "local" });
     router.push("/login");
   };
 

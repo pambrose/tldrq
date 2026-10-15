@@ -12,8 +12,9 @@ function LoginDesktopContent() {
     const port = searchParams.get("port");
     if (provider && port) {
       const supabase = createClient();
-      // Clear any stale session/PKCE state before starting fresh OAuth
-      supabase.auth.signOut().finally(() => {
+      // Clear any stale session/PKCE state before starting fresh OAuth. Local scope only:
+      // the default global scope would also revoke the user's sessions on other devices.
+      supabase.auth.signOut({ scope: "local" }).finally(() => {
         supabase.auth.signInWithOAuth({
           provider,
           options: {

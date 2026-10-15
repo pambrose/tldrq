@@ -1,4 +1,5 @@
 import * as cheerio from "cheerio";
+import { resolveImageUrl } from "@/lib/utils/ui";
 
 export interface OGMetadata {
   title: string | null;
@@ -213,8 +214,8 @@ async function fetchGenericOGMetadata(url: string): Promise<OGMetadata> {
     $('meta[name="description"]').attr("content") ||
     null;
 
-  const ogImage =
-    $('meta[property="og:image"]').attr("content") || null;
+  // response.url is the final URL after redirects, which relative paths resolve against
+  const ogImage = resolveImageUrl($('meta[property="og:image"]').attr("content"), response.url || url);
 
   const ogSiteName =
     $('meta[property="og:site_name"]').attr("content") || null;
@@ -222,7 +223,7 @@ async function fetchGenericOGMetadata(url: string): Promise<OGMetadata> {
   return {
     title: ogTitle?.trim() || null,
     description: ogDescription?.trim() || null,
-    image_url: ogImage?.trim() || null,
+    image_url: ogImage,
     site_name: ogSiteName?.trim() || null,
   };
 }
@@ -245,7 +246,7 @@ async function fetchTwitterImage(url: string): Promise<string | null> {
     if (!response.ok) return null;
     const html = await response.text();
     const $ = cheerio.load(html);
-    return $('meta[property="og:image"]').attr("content")?.trim() || null;
+    return resolveImageUrl($('meta[property="og:image"]').attr("content"), response.url || url);
   } catch {
     return null;
   }
