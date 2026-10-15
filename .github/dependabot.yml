@@ -30,6 +30,14 @@ updates:
       # the next Node line is a deliberate change, not a routine bump.
       - dependency-name: "@types/node"
         update-types: ["version-update:semver-major"]
+      # TypeScript 7 drops the JS compiler API that the Next.js build type-check and
+      # typescript-eslint both load. Remove once both support TS 7.
+      - dependency-name: "typescript"
+        update-types: ["version-update:semver-major"]
+      # The plugins bundled in eslint-config-next (eslint-plugin-react) crash on ESLint 10.
+      # Remove once eslint-config-next supports it.
+      - dependency-name: "eslint"
+        update-types: ["version-update:semver-major"]
 
   # The Electron desktop wrapper has its own lockfile and isn't built by CI, so check
   # these PRs by hand with `npm start` in electron/.
