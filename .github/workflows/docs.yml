@@ -1,0 +1,92 @@
+name: Documentation
+on:
+    # Pull requests build the site, so a broken link, a missing page or a missing snippet fails a check before it
+    # merges. Pushes to master build and deploy, so docs.tldrq.com follows the app, which Vercel deploys from master.
+    # Both run only when something the site is built from changes: its own files, and every repository file a page
+    # includes with pymdownx.snippets. Add a file here when a page starts including it.
+    pull_request:
+        paths:
+            - "website/**"
+            - "supabase/schema.sql"
+            - "package.json"
+            - "electron/package.json"
+            - ".github/dependabot.yml"
+            - ".github/workflows/ci.yml"
+            - ".github/workflows/docs.yml"
+    push:
+        branches:
+            - master
+        paths:
+            - "website/**"
+            - "supabase/schema.sql"
+            - "package.json"
+            - "electron/package.json"
+            - ".github/dependabot.yml"
+            - ".github/workflows/ci.yml"
+            - ".github/workflows/docs.yml"
+    workflow_dispatch:
+
+# Least privilege by default; each job asks for what it needs.
+permissions:
+    contents: read
+
+# Deploys share one group and are never cancelled. Pull request runs get a group per ref, so a newer push to a PR
+# supersedes its older run, and no PR run can replace a deploy waiting in the queue.
+concurrency:
+    group: ${{ github.event_name == 'pull_request' && format('docs-{0}', github.ref) || 'pages' }}
+    cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+    # Build the site, and upload the Pages artifact when deploying. Kept separate from the deploy job so that
+    # recovering a failed deploy means re-running only the deploy job, which does not re-upload the artifact
+    # (actions/deploy-pages fails when a run holds more than one artifact named "github-pages").
+    #
+    # It restores nothing from a cache: this workflow publishes the site, and a cache entry written by another run
+    # could change what gets deployed (zizmor's cache-poisoning audit).
+    docs:
+        runs-on: ubuntu-latest
+        permissions:
+            contents: read
+            pages: read
+        env:
+            DEPLOY: ${{ github.event_name == 'push' || github.event_name == 'workflow_dispatch' }}
+        steps:
+            -   uses: actions/configure-pages@45bfe0192ca1faeb007ade9deae92b16b8254a0d # v6.0.0
+                if: env.DEPLOY == 'true'
+            # Nothing here pushes, so checkout doesn't leave the token in .git/config (zizmor's artipacked audit).
+            -   uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+                with:
+                    persist-credentials: false
+
+            # uv reads website/.python-version and installs that Python itself, then Zensical from website/uv.lock.
+            -   uses: astral-sh/setup-uv@c18668ad3cf93ea998bef934396af7bb5c839dc7 # v10.2.0
+                with:
+                    enable-cache: false
+            # --strict doesn't report a nav entry whose page is missing, so check the nav first.
+            -   run: uv run --locked python ../check_nav.py
+                working-directory: website/tldrq
+            # --strict turns warnings, such as a link to a missing page or anchor, into failures.
+            -   run: uv run --locked zensical build --clean --strict
+                working-directory: website/tldrq
+
+            -   uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0
+                if: env.DEPLOY == 'true'
+                with:
+                    path: website/tldrq/site
+
+    # Deploy the artifact produced by the docs job. Deliberately minimal (no checkout or build) so re-running just
+    # this job re-deploys the existing artifact. The github-pages environment accepts only master.
+    deploy:
+        if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
+        needs: docs
+        runs-on: ubuntu-latest
+        permissions:
+            pages: write
+            id-token: write
+            actions: read
+        environment:
+            name: github-pages
+            url: ${{ steps.deployment.outputs.page_url }}
+        steps:
+            -   uses: actions/deploy-pages@368f82528645a54fb793d4d04e342629a3f51346 # v5.0.1
+                id: deployment

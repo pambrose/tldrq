@@ -47,3 +47,10 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 .env*.local
+
+# docs site (website/)
+website/.venv/
+website/**/site/
+website/**/.cache/
+# uv.lock pins Zensical for CI; re-include it in case a global ignore matches *.lock
+!website/uv.lock
