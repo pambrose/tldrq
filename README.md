@@ -10,6 +10,21 @@
 
 Save, organize, and track your reading with a clean, minimal web app.
 
+## Documentation
+
+The User Guide and Developer Guide are at **<https://docs.tldrq.com>**. The site is built with
+[Zensical](https://zensical.org) from `website/tldrq/` and deployed to GitHub Pages by
+`.github/workflows/docs.yml` whenever a push to `master` changes it.
+
+To preview it locally at <http://localhost:8000> (needs [uv](https://docs.astral.sh/uv/)):
+
+```bash
+make docs-serve
+```
+
+`make docs-build` runs the same checks and strict build as CI, `make docs-clean` removes the output, and
+`make upgrade-site` upgrades the site's dependencies in `website/uv.lock`.
+
 ## Features
 
 - **Bookmark any URL** with auto-fetched title, description, and thumbnail (OG metadata)

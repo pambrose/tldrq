@@ -1,0 +1,158 @@
+# ============================================================================
+# tldrq Documentation - Zensical Configuration
+# ============================================================================
+#
+# Files the pages show verbatim (the database schema, package.json, the workflows) are
+# included with pymdownx.snippets rather than copied, so the docs can't drift from them.
+# Paths are relative to the repository root. Every file included this way must also be in
+# the path filters of .github/workflows/docs.yml, so a change to it rebuilds the site.
+
+[project]
+
+site_name = "tldrq"
+site_description = "User and developer documentation for tldrq, the last tab you'll ever need"
+site_author = "Paul Ambrose"
+
+# Published to GitHub Pages by .github/workflows/docs.yml on every push to master that changes it.
+site_url = "https://docs.tldrq.com/"
+
+repo_url = "https://github.com/pambrose/tldrq"
+repo_name = "pambrose/tldrq"
+# The pages live below the repository root, so the edit/view links need the full path.
+edit_uri = "edit/master/website/tldrq/docs/"
+
+copyright = """
+Copyright &copy; 2026 Paul Ambrose
+"""
+
+nav = [
+    { "Home" = "index.md" },
+    { "User Guide" = [
+        { "Getting Started" = "user-guide/index.md" },
+        { "Saving Bookmarks" = "user-guide/saving.md" },
+        { "Collections" = "user-guide/collections.md" },
+        { "Priorities & Read Status" = "user-guide/priorities.md" },
+        { "Filtering, Search & Sorting" = "user-guide/finding.md" },
+        { "Sharing" = "user-guide/sharing.md" },
+        { "Import, Export & Bulk Actions" = "user-guide/import-export.md" },
+        { "Desktop App" = "user-guide/desktop.md" },
+        { "FAQ & Troubleshooting" = "user-guide/faq.md" },
+    ] },
+    { "Developer Guide" = [
+        { "Architecture" = "developer-guide/index.md" },
+        { "Local Development" = "developer-guide/local-development.md" },
+        { "Configuration" = "developer-guide/configuration.md" },
+        { "Database" = "developer-guide/database.md" },
+        { "Authentication" = "developer-guide/authentication.md" },
+        { "Metadata Fetching" = "developer-guide/metadata.md" },
+        { "API Reference" = "developer-guide/api.md" },
+        { "Frontend" = "developer-guide/frontend.md" },
+        { "Desktop App Internals" = "developer-guide/desktop.md" },
+        { "Deployment" = "developer-guide/deployment.md" },
+        { "CI, Dependencies & Releases" = "developer-guide/ci-releases.md" },
+    ] },
+    { "Changelog" = "https://github.com/pambrose/tldrq/blob/master/CHANGELOG.md" },
+    { "Releases" = "https://github.com/pambrose/tldrq/releases" },
+]
+
+# ----------------------------------------------------------------------------
+# Theme configuration
+# ----------------------------------------------------------------------------
+[project.theme]
+
+language = "en"
+
+features = [
+    "content.action.edit",
+    "content.action.view",
+    "content.code.annotate",
+    "content.code.copy",
+    "content.code.select",
+    "content.footnote.tooltips",
+    "content.tabs.link",
+    "content.tooltips",
+    "navigation.footer",
+    "navigation.indexes",
+    "navigation.instant",
+    "navigation.instant.prefetch",
+    "navigation.instant.progress",
+    "navigation.path",
+    "navigation.sections",
+    "navigation.tabs",
+    "navigation.tabs.sticky",
+    "navigation.top",
+    "navigation.tracking",
+    "search.highlight",
+    "toc.follow",
+]
+
+# Dark mode first = default
+[[project.theme.palette]]
+scheme = "slate"
+toggle.icon = "lucide/moon"
+toggle.name = "Switch to light mode"
+
+[[project.theme.palette]]
+scheme = "default"
+toggle.icon = "lucide/sun"
+toggle.name = "Switch to dark mode"
+
+# ----------------------------------------------------------------------------
+# Social links
+# ----------------------------------------------------------------------------
+[[project.extra.social]]
+icon = "fontawesome/brands/github"
+link = "https://github.com/pambrose/tldrq"
+
+# ----------------------------------------------------------------------------
+# Markdown extensions
+# ----------------------------------------------------------------------------
+
+# attr_list - add HTML attributes to Markdown elements
+[project.markdown_extensions.attr_list]
+
+# md_in_html - render Markdown inside HTML blocks (needed for grid cards)
+[project.markdown_extensions.md_in_html]
+
+# admonition - callout blocks (!!!)
+[project.markdown_extensions.admonition]
+
+# tables
+[project.markdown_extensions.tables]
+
+# toc - permalinks on headings
+[project.markdown_extensions.toc]
+permalink = true
+
+# pymdownx.details - collapsible admonitions (???)
+[project.markdown_extensions.pymdownx.details]
+
+# pymdownx.emoji - inline icons (:lucide-*:, :material-*:, :octicons-*:, :fontawesome-*:)
+[project.markdown_extensions.pymdownx.emoji]
+emoji_index = "zensical.extensions.emoji.twemoji"
+emoji_generator = "zensical.extensions.emoji.to_svg"
+
+# pymdownx.inlinehilite - highlighted inline code
+[project.markdown_extensions.pymdownx.inlinehilite]
+
+# pymdownx.snippets - include repository files (paths relative to the repository root).
+# check_paths fails the build when an included file is missing.
+[project.markdown_extensions.pymdownx.snippets]
+base_path = ["../.."]
+check_paths = true
+
+# pymdownx.superfences - fenced code blocks (and snippets inside them) with Mermaid support
+[project.markdown_extensions.pymdownx.superfences]
+custom_fences = [
+    { name = "mermaid", class = "mermaid", format = "pymdownx.superfences.fence_code_format" },
+]
+
+# pymdownx.tabbed - content tabs
+[project.markdown_extensions.pymdownx.tabbed]
+alternate_style = true
+
+# pymdownx.highlight - syntax highlighting
+[project.markdown_extensions.pymdownx.highlight]
+anchor_linenums = true
+line_spans = "__span"
+pygments_lang_class = true

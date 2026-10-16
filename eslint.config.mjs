@@ -14,6 +14,8 @@ const eslintConfig = defineConfig([
     "next-env.d.ts",
     // Scratch files written by the Remember plugin.
     ".remember/**",
+    // The docs site: its uv environment and build output contain third-party bundles.
+    "website/**",
   ]),
   {
     // Bookmark thumbnails come from arbitrary user-submitted domains
