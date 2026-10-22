@@ -13,6 +13,35 @@ Versions 0.1.2 and 0.1.4 were never released.
 
 For the release notes exactly as published, see [RELEASE_NOTES.md](RELEASE_NOTES.md).
 
+## [0.2.12] - 2026-10-21
+
+Security release, plus a documentation site. No app feature changes.
+
+### Added
+
+- Documentation site at https://docs.tldrq.com, built with Zensical from `website/tldrq/`:
+  a User Guide (9 pages) and a Developer Guide (11 pages). The `Documentation` workflow
+  builds it on pull requests and deploys it to GitHub Pages from `master`
+- `make docs-serve`, `docs-build`, `docs-clean`, and `upgrade-site` targets
+
+### Changed
+
+- Next.js and `eslint-config-next` 16.4.0 → 16.4.1; React and React DOM 19.3.0 → 19.3.1
+- `@types/node` 26.6.4 → 26.6.5
+- Desktop wrapper: Electron 44.7.0 → 44.7.2
+- `astral-sh/setup-uv` 10.2.0 → 10.3.0 in the documentation workflow
+
+### Security
+
+- Next.js 16.4.1 fixes two critical remote code execution advisories (`use cache` functions
+  returning typed arrays, Image Optimization API with SVG files) and a high-severity denial
+  of service in App Router Server Actions
+- Electron 44.7.1 and 44.7.2 update Chromium to 152.0.7977.149 and backport ANGLE, Chromium,
+  PDFium, and V8 fixes
+- The `sprintf-js` alert in `electron/` is dismissed as tolerable risk: no fixed release
+  exists, and it is only in the tooling that downloads Electron, not in either app. No
+  Dependabot alerts remain open
+
 ## [0.2.11] - 2026-10-15
 
 Bug-fix release.
@@ -314,6 +343,7 @@ Maintenance release. No user-facing feature changes.
 
 - Initial implementation of the Reading List web app
 
+[0.2.12]: https://github.com/pambrose/tldrq/compare/0.2.11...0.2.12
 [0.2.11]: https://github.com/pambrose/tldrq/compare/0.2.10...0.2.11
 [0.2.10]: https://github.com/pambrose/tldrq/compare/0.2.9...0.2.10
 [0.2.9]: https://github.com/pambrose/tldrq/compare/0.2.8...0.2.9
