@@ -71,26 +71,26 @@ or compromised version has time to be caught; security updates skip the wait.
 
 ## Releases
 
-tldrq's releases follow one process, visible in its tags and in pull requests such as "Bump version to 0.2.11":
+tldrq's releases follow one process, visible in its tags and in pull requests such as "Bump version to 0.2.12":
 
-1. On a branch, bump `version` in `package.json` and `package-lock.json`. `npm version 0.2.12 --no-git-tag-version`
+1. On a branch, bump `version` in `package.json` and `package-lock.json`. `npm version 0.2.13 --no-git-tag-version`
    does both.
 2. Add a section for the version to `CHANGELOG.md`, which follows
    [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and [Semantic Versioning](https://semver.org/).
 3. Add the release notes, exactly as they'll be published, to the top of `RELEASE_NOTES.md`.
-4. Open a pull request titled "Bump version to 0.2.12", get the checks green, and merge it.
-5. Tag the merge commit on `master` with the version, without a `v` prefix (`0.2.12`), and create the GitHub
-   release, titled with a `v` prefix (`v0.2.12`). Its description summarizes the changes and ends with a link to the
+4. Open a pull request titled "Bump version to 0.2.13", get the checks green, and merge it.
+5. Tag the merge commit on `master` with the version, without a `v` prefix (`0.2.13`), and create the GitHub
+   release, titled with a `v` prefix (`v0.2.13`). Its description summarizes the changes and ends with a link to the
    full diff:
 
     ```text
-    **Full Changelog**: https://github.com/pambrose/tldrq/compare/0.2.11...0.2.12
+    **Full Changelog**: https://github.com/pambrose/tldrq/compare/0.2.12...0.2.13
     ```
 
     For example:
 
     ```bash
-    gh release create 0.2.12 --target master --title v0.2.12 --notes-file notes.md
+    gh release create 0.2.13 --target master --title v0.2.13 --notes-file notes.md
     ```
 
 The app shows the version from `package.json` in its header and on the sign-in page. Vercel deploys the merge, so

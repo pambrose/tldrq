@@ -11,6 +11,32 @@ Versions 0.1.2 and 0.1.4 were never released.
 
 ---
 
+## v0.2.12 — 2026-10-21
+
+Security release: Next.js 16.4.1 fixes two critical remote code execution advisories. tldrq also has a documentation site now, at https://docs.tldrq.com. No app feature changes.
+
+### Security
+
+- **Next.js 16.4.1** fixes two critical remote code execution advisories (`use cache` functions returning typed arrays, Image Optimization API with SVG files) and a high-severity denial of service in App Router Server Actions
+- **Electron 44.7.2** (with 44.7.1) updates Chromium to 152.0.7977.149 and backports ANGLE, Chromium, PDFium, and V8 fixes
+- The **sprintf-js** alert in `electron/` noted in v0.2.10 is dismissed as tolerable risk: no fixed release exists, and it is only in the tooling that downloads Electron, not in either app. No Dependabot alerts remain open.
+
+### Documentation
+
+- New documentation site at **https://docs.tldrq.com**, with a User Guide (9 pages) and a Developer Guide (11 pages). The schema, both `package.json` files, the workflows, and the Dependabot config are included directly from the repository, so the pages can't drift from them.
+- A **Documentation** workflow builds the site on pull requests and deploys it to GitHub Pages from `master`.
+
+### Dependencies
+
+- **Next.js** / **eslint-config-next** 16.4.0 → 16.4.1, **React** / **React DOM** 19.3.0 → 19.3.1
+- **@types/node** 26.6.4 → 26.6.5
+- Desktop wrapper: **Electron** 44.7.0 → 44.7.2
+- **astral-sh/setup-uv** 10.2.0 → 10.3.0 in the documentation workflow
+
+**Full Changelog**: https://github.com/pambrose/tldrq/compare/0.2.11...0.2.12
+
+---
+
 ## v0.2.11 — 2026-10-15
 
 Bug-fix release: sign-out no longer ends your sessions on other devices, and bookmark thumbnails with relative image paths now load.

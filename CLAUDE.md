@@ -9,9 +9,13 @@ npm run dev      # Start development server (Next.js 16 + Turbopack)
 npm run build    # Production build
 npm start        # Start production server
 npm run lint     # ESLint
+make docs-serve  # Serve the docs site (website/tldrq/) at http://localhost:8000; needs uv
+make docs-build  # Nav check + strict Zensical build, as the Documentation workflow runs it
 ```
 
 No test framework is configured.
+
+The docs site at https://docs.tldrq.com is built from `website/tldrq/` and deployed to GitHub Pages by `.github/workflows/docs.yml` on pushes to `master`. Pages include `supabase/schema.sql`, both `package.json` files, the workflows and the Dependabot config via `pymdownx.snippets`; when a page starts including another file, add it to both path lists in `docs.yml`.
 
 ## Architecture
 
