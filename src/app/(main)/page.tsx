@@ -23,8 +23,7 @@ export default async function DashboardPage({
   const { collection, filter, priority, sort, search } = await searchParams;
   const supabase = await createClient();
 
-  // Fetch collections
-  const { data: collections } = await supabase
+  const collectionsQuery = supabase
     .from("collections")
     .select("*")
     .order("created_at", { ascending: true });
@@ -65,7 +64,16 @@ export default async function DashboardPage({
     query = query.order("created_at", { ascending: false });
   }
 
-  const { data: bookmarks } = await query;
+  const [
+    { data: collections, error: collectionsError },
+    { data: bookmarks, error: bookmarksError },
+  ] = await Promise.all([collectionsQuery, query]);
+
+  // Without this, a failed read would look like an empty dashboard.
+  const loadError = collectionsError ?? bookmarksError;
+  if (loadError) {
+    throw new Error(`Failed to load dashboard: ${loadError.message}`);
+  }
 
   const typedCollections = (collections || []) as Collection[];
   const typedBookmarks = (bookmarks || []) as Bookmark[];

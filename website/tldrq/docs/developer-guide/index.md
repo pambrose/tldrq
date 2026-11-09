@@ -77,8 +77,8 @@ The JSON endpoints are documented in the [API Reference](api.md), and the auth r
 
 Server components fetch data and pass it down as props:
 
-- `src/app/(main)/layout.tsx` is the auth guard: it calls `supabase.auth.getUser()`, redirects to `/login` when there's
-  no user, and renders the header.
+- `src/app/(main)/layout.tsx` is the auth guard: it calls `supabase.auth.getClaims()`, redirects to `/login` when
+  there's no user, and renders the header.
 - `src/app/(main)/page.tsx` reads `collection`, `filter`, `priority`, `sort` and `search` from `searchParams`,
   queries the `collections` and `bookmarks` tables, and renders the dashboard.
 - `src/app/share/[slug]/page.tsx` renders share links; `src/app/login/page.tsx` the sign-in page.
@@ -108,7 +108,7 @@ sequenceDiagram
     P->>S: getUser() refreshes the session cookies
     P-->>B: redirect to /login if signed out
     P->>L: signed in
-    L->>S: getUser()
+    L->>L: getClaims() verifies the token
     L->>G: render
     G->>S: select collections and bookmarks (RLS)
     G-->>B: HTML

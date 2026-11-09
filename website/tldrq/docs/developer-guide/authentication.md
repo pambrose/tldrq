@@ -28,7 +28,11 @@ session anyway.
 the response. If there's no user, any path other than `/login`, `/auth/*` and `/share/*` is redirected to `/login`.
 That includes `/api/*`: a signed-out API call gets the redirect before its handler's own 401 check runs.
 
-`src/app/(main)/layout.tsx` checks `getUser()` again before rendering the dashboard.
+If Supabase Auth can't be reached, those paths get a 503 instead of the redirect, so an outage doesn't look like a
+sign-out. Pages get a short HTML notice that reloads itself, and `/api/*` gets `{ error: "..." }`.
+
+`src/app/(main)/layout.tsx` calls `getClaims()` before rendering the dashboard. With asymmetric signing keys that
+verifies the token locally, so the proxy's `getUser()` is the only Auth round trip for the page.
 
 ## Web sign-in
 

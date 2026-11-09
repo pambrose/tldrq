@@ -1,7 +1,18 @@
 import { notFound } from "next/navigation";
+import type { PostgrestError } from "@supabase/supabase-js";
 import { createClient } from "@/lib/supabase/server";
 import { BookmarkCardReadonly } from "@/components/bookmarks/bookmark-card-readonly";
 import type { Bookmark, Collection, SharedView } from "@/types/database";
+
+// `.single()` reports "no rows" as this error code, and that case is a normal 404.
+const NO_ROWS = "PGRST116";
+
+// Without this, a failed read would look like a missing share or an empty list.
+function throwIfReadFailed(error: PostgrestError | null) {
+  if (error && error.code !== NO_ROWS) {
+    throw new Error(`Failed to load shared page: ${error.message}`);
+  }
+}
 
 function buildViewLabel(view: SharedView, collectionName: string | null): string {
   const parts: string[] = [];
@@ -23,20 +34,23 @@ export default async function SharePage({
   const supabase = await createClient();
 
   // Try shared_views first
-  const { data: sharedView } = await supabase
+  const { data: sharedView, error: sharedViewError } = await supabase
     .from("shared_views")
     .select("*")
     .eq("slug", slug)
     .eq("is_active", true)
     .single();
 
+  throwIfReadFailed(sharedViewError);
+
   if (sharedView) {
     const typedView = sharedView as SharedView;
 
     // Fetch bookmarks via the security definer function
-    const { data: bookmarks } = await supabase.rpc("get_shared_bookmarks", {
+    const { data: bookmarks, error: bookmarksError } = await supabase.rpc("get_shared_bookmarks", {
       view_slug: slug,
     });
+    throwIfReadFailed(bookmarksError);
     const typedBookmarks = (bookmarks || []) as Bookmark[];
 
     // Get collection name if applicable
@@ -82,12 +96,14 @@ export default async function SharePage({
   }
 
   // Fall back to legacy collection share slug
-  const { data: collection } = await supabase
+  const { data: collection, error: collectionError } = await supabase
     .from("collections")
     .select("*")
     .eq("share_slug", slug)
     .eq("is_public", true)
     .single();
+
+  throwIfReadFailed(collectionError);
 
   if (!collection) {
     notFound();
@@ -95,11 +111,13 @@ export default async function SharePage({
 
   const typedCollection = collection as Collection;
 
-  const { data: bookmarks } = await supabase
+  const { data: bookmarks, error: bookmarksError } = await supabase
     .from("bookmarks")
     .select("*")
     .eq("collection_id", typedCollection.id)
     .order("created_at", { ascending: false });
+
+  throwIfReadFailed(bookmarksError);
 
   const typedBookmarks = (bookmarks || []) as Bookmark[];
 
