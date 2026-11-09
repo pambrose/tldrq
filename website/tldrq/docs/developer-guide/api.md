@@ -14,7 +14,8 @@ app's own pages, but they're plain JSON over HTTP and easy to call from a signed
 - **Signed-out requests** are redirected by the [proxy](authentication.md#the-proxy) to `/login`
   (`NextResponse.redirect`, HTTP 307) before reaching a handler. A handler that runs without a user returns
   `401 {"error": "Unauthorized"}`.
-- **Errors** are `{ "error": "message" }`. Database errors come back as `500` with Supabase's message.
+- **Errors** are `{ "error": "message" }`. Database errors come back as `500` with Supabase's message. If Supabase
+  Auth can't be reached, the proxy answers `503` with a `Retry-After` header before a handler runs.
 - **Scoping.** Every query is limited to the signed-in user, by Row Level Security and by an explicit
   `.eq("user_id", user.id)`.
 

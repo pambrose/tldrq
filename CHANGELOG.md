@@ -13,6 +13,45 @@ Versions 0.1.2 and 0.1.4 were never released.
 
 For the release notes exactly as published, see [RELEASE_NOTES.md](RELEASE_NOTES.md).
 
+## [0.2.13] - 2026-11-08
+
+Handles Supabase outages cleanly and speeds up the dashboard, with security and
+dependency updates.
+
+### Added
+
+- A loading skeleton for the dashboard (`src/app/(main)/loading.tsx`)
+- An error page with a **Try again** button (`src/app/error.tsx`)
+
+### Changed
+
+- Reads on the server no longer retry, so a Supabase failure shows straight away. Retries
+  could hold a page open for about 30 seconds per read
+- The dashboard's collections and bookmarks reads run in parallel
+- The dashboard layout uses `getClaims()`, so with asymmetric signing keys the proxy's
+  `getUser()` is the only Auth round trip for a page
+- Next.js and `eslint-config-next` 16.4.1 → 16.4.3
+- `@supabase/supabase-js` 2.117.3 → 2.118.0
+- `@types/node` 26.6.5 → 26.6.6
+- Desktop wrapper: Electron 44.7.2 → 45.1.0, `electron-builder` 26.15.3 → 26.18.0
+- `astral-sh/setup-uv` 10.3.0 → 10.3.3 in the documentation workflow
+
+### Fixed
+
+- A Supabase Auth outage no longer looks like being signed out. The proxy returns a 503
+  instead of redirecting to `/login`: a notice that reloads itself for pages, and
+  `{ "error": "..." }` for `/api/*`
+- A failed read now shows the error page, rather than an empty dashboard or a 404 for a
+  share link that exists
+
+### Security
+
+- `undici` 7.30.0 → 7.30.1 in both the web app and `electron/`, fixing seven advisories
+- The `minimatch` alerts (GHSA-g3hv-75wg-m249) are dismissed as tolerable risk: the fixed
+  release is blocked by version ranges in ESLint 9's plugins, `typescript-estree` and
+  `electron-builder`, and it is only in lint and packaging tools, not in either app. No
+  Dependabot alerts remain open
+
 ## [0.2.12] - 2026-10-21
 
 Security release, plus a documentation site. No app feature changes.
@@ -343,6 +382,7 @@ Maintenance release. No user-facing feature changes.
 
 - Initial implementation of the Reading List web app
 
+[0.2.13]: https://github.com/pambrose/tldrq/compare/0.2.12...0.2.13
 [0.2.12]: https://github.com/pambrose/tldrq/compare/0.2.11...0.2.12
 [0.2.11]: https://github.com/pambrose/tldrq/compare/0.2.10...0.2.11
 [0.2.10]: https://github.com/pambrose/tldrq/compare/0.2.9...0.2.10

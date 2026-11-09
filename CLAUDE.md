@@ -34,6 +34,13 @@ Server components fetch data and pass it as props to client components. Client c
 2. OAuth sign-in calls `supabase.auth.signInWithOAuth()` → redirects to provider → returns to `/auth/callback`
 3. Callback exchanges code for session and creates default collections ("Videos", "Tweets", "Articles", "Repos") for the user
 4. Two Supabase clients: `server.ts` (uses `await cookies()`, for server components/API routes) and `client.ts` (browser, for OAuth initiation)
+5. `(main)/layout.tsx` uses `getClaims()` rather than a second `getUser()`, so the proxy's check is the only Auth round trip when the project uses asymmetric signing keys
+
+### Supabase Failures
+
+- `server.ts` sets `db: { retry: false }`, because the default retries hold a page open for about 30 seconds per read during an outage
+- When Supabase Auth can't be reached, the proxy returns a 503 instead of redirecting to `/login`: a self-reloading notice for pages, `{ error: "message" }` for `/api/*`
+- Server pages throw on a failed read, which renders `src/app/error.tsx`. Treating a failed read as empty would show "0 bookmarks" or a false 404. `(main)/loading.tsx` is the dashboard skeleton
 
 ### Metadata Fetching (`src/lib/utils/metadata.ts`)
 

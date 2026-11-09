@@ -87,8 +87,9 @@ Server components fetch data and pass it down as props:
 Everything interactive is a client component (`"use client"`): `url-input`, `bookmark-card`,
 `bookmark-card-readonly`, `bookmark-list-wrapper`, `bulk-import`, `import-button`, `export-button`,
 `delete-all-button`, `refresh-button`, `refresh-context`, `filter-tabs`, `search-input`, `collection-tabs`,
-`collection-menu`, `share-button`, `login-buttons`, `sign-out-button` and `theme-toggle`, plus the pages
-`src/app/auth/desktop/page.tsx` and `src/app/auth/login-desktop/page.tsx`. [Frontend](frontend.md) maps them all.
+`collection-menu`, `share-button`, `login-buttons`, `sign-out-button` and `theme-toggle`, plus the error page
+`src/app/error.tsx` and the pages `src/app/auth/desktop/page.tsx` and `src/app/auth/login-desktop/page.tsx`.
+[Frontend](frontend.md) maps them all.
 
 ## Request lifecycle
 

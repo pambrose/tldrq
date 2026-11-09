@@ -11,6 +11,38 @@ Versions 0.1.2 and 0.1.4 were never released.
 
 ---
 
+## v0.2.13 — 2026-11-08
+
+tldrq now handles Supabase outages cleanly: pages that could hang for a minute fail straight away with a clear message, and an outage no longer looks like being signed out. The dashboard also loads faster, and this release includes security and dependency updates.
+
+### Reliability
+
+- **Fails fast during an outage.** Reads on the server no longer retry, which could hold a page open for about 30 seconds per read.
+- **An outage isn't a sign-out.** If Supabase Auth can't be reached, you get a notice that reloads itself instead of being sent to the sign-in page. API calls get a `503` with `{ "error": "..." }`.
+- **Failed reads are reported.** You now see an error page with a **Try again** button, rather than an empty dashboard or a 404 for a share link that exists.
+
+### Performance
+
+- The dashboard shows a **loading skeleton** while your bookmarks load.
+- The dashboard's two reads run in parallel, and the layout uses `getClaims()` so that, with asymmetric signing keys, the proxy's check is the only Auth round trip for a page.
+
+### Security
+
+- **undici** 7.30.0 → 7.30.1 in both the web app and `electron/`, fixing seven advisories
+- The **minimatch** alerts (GHSA-g3hv-75wg-m249) are dismissed as tolerable risk: the fixed release is blocked by version ranges in ESLint 9's plugins, `typescript-estree`, and `electron-builder`, and it is only in lint and packaging tools, not in either app. No Dependabot alerts remain open.
+
+### Dependencies
+
+- **Next.js** / **eslint-config-next** 16.4.1 → 16.4.3
+- **@supabase/supabase-js** 2.117.3 → 2.118.0
+- **@types/node** 26.6.5 → 26.6.6
+- Desktop wrapper: **Electron** 44.7.2 → 45.1.0, **electron-builder** 26.15.3 → 26.18.0
+- **astral-sh/setup-uv** 10.3.0 → 10.3.3 in the documentation workflow
+
+**Full Changelog**: https://github.com/pambrose/tldrq/compare/0.2.12...0.2.13
+
+---
+
 ## v0.2.12 — 2026-10-21
 
 Security release: Next.js 16.4.1 fixes two critical remote code execution advisories. tldrq also has a documentation site now, at https://docs.tldrq.com. No app feature changes.
