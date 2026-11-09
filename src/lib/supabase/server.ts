@@ -8,6 +8,9 @@ export async function createClient() {
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
+      // By default each failed read retries for about 30 seconds during an outage,
+      // holding the page open. Fail straight away and let the error page handle it.
+      db: { retry: false },
       cookies: {
         getAll() {
           return cookieStore.getAll();
