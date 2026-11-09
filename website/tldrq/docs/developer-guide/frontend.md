@@ -19,6 +19,10 @@ lives in the URL; changes go through the API and end in `router.refresh()`.
       `ExportButton` (given the displayed URLs), `ShareButton` and `RefreshButton`;
     - `BookmarkListWrapper` around `BookmarkList`, which renders a `BookmarkCard` per bookmark.
 
+While the page first loads, `src/app/(main)/loading.tsx` shows a skeleton. Changing a filter or searching keeps the
+current page on screen instead, so the search box keeps focus. If a read fails, the page throws and the client
+component `src/app/error.tsx` shows a **Try again** button, so a failure doesn't look like an empty dashboard.
+
 ## Component map
 
 | File (under `src/components/`) | Kind | Role |

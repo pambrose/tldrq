@@ -53,6 +53,18 @@ on each one you want to end.
 The desktop app is the exception: it shares one session with the browser you signed in with, so signing out of
 either one signs out both. See [Desktop App](desktop.md#signing-out).
 
+## When tldrq is unavailable
+
+### "tldrq.com is temporarily unavailable"
+
+The service tldrq uses for accounts and storage can't be reached right now. You don't need to do anything: the page
+reloads itself every 30 seconds, and you haven't been signed out.
+
+### "This page couldn't be loaded"
+
+Your bookmarks or a shared page couldn't be read, usually because of a temporary problem. Click **Try again**, or
+come back in a few minutes.
+
 ## Privacy and sharing
 
 ### Can someone see my bookmarks?

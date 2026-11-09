@@ -69,6 +69,9 @@ npm run build      # electron-builder --mac
 
 `npm run build` writes a DMG to `electron/dist/`, which is gitignored along with `electron/node_modules/`.
 
+`npm install` doesn't fetch the Electron binary. The first `npm start` downloads it and checks it against the
+package's checksums, so that run takes longer.
+
 ## Package configuration
 
 ```json title="electron/package.json"
